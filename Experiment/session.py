@@ -16,7 +16,7 @@ from psychopy import visual, tools
 from psychopy.visual import filters
 
 from exptools2.core import Session, PylinkEyetrackerSession
-from trial import PRFTrial, PsychophysTrial
+from trial import BaselineTrial, PRFTrial, PsychophysTrial
 from stim import PRFStim, AttSizeStim, FixationStim, cross_fixation
 from utils import create_stim_list, get_stim_nr,psyc_stim_list
 
@@ -31,10 +31,11 @@ class PRFSession(PylinkEyetrackerSession):
         super().__init__(output_str=output_str, output_dir=output_dir, settings_file=settings_file, eyetracker_on = eyetracker_on)
 
         self.bar_orientations = np.array(self.settings['PRF stimulus settings']['Bar orientations'])
+        self.end_blanks = int(self.settings['attn_task']['baseline_end']/self.settings['mri']['TR'] + 1)
         self.n_trials = 5 + self.settings['PRF stimulus settings']['Bar pass steps'] \
                         * len(np.where(self.bar_orientations != -1)[0]) \
                         + self.settings['PRF stimulus settings']['Blanks length'] \
-                        * len(np.where(self.bar_orientations == -1)[0])
+                        * len(np.where(self.bar_orientations == -1)[0]) + self.end_blanks
         self.stim_per_trial = self.settings['attn_task']['stim_per_trial']
         self.n_stim = self.n_trials * self.stim_per_trial
         self.trials = []
@@ -186,11 +187,16 @@ class PRFSession(PylinkEyetrackerSession):
                                                     bar_direction=self.bar_direction_at_TR[i]
                                                     ))
             else:
-                self.trials.append(PRFTrial(session=self,
+                if i < self.n_trials - self.end_blanks:
+                    self.trials.append(PRFTrial(session=self,
                                             trial_nr=i,
                                             bar_orientation=self.bar_orientation_at_TR[i],
                                             bar_position_in_ori=self.bar_pos_in_ori[i],
                                             bar_direction=self.bar_direction_at_TR[i]
+                                            ))
+                else:
+                    self.trials.append(BaselineTrial(session=self,
+                                            trial_nr=i
                                             ))
 
         # times for dot color change. continue the task into the topup
@@ -233,7 +239,9 @@ class PRFSession(PylinkEyetrackerSession):
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
         self.display_text('', keys=self.settings['mri'].get('sync', 't'))
 
-        self.start_experiment()
+        n_triggers = int(1 + self.settings['attn_task']['baseline_start']/self.settings['mri']['TR'])
+
+        self.start_experiment(wait_n_triggers=n_triggers,show_fix_during_dummies=False)
 
         if self.eyetracker_on:
             self.start_recording_eyetracker()

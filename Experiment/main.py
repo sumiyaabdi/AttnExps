@@ -47,7 +47,7 @@ def main():
     settings_file='expsettings/expsettings_'+task+'.yml'
 
     if task == 'yesno':
-        if (eyetrack == 'n') or (eyetrack == 'n'):
+        if (eyetrack == 'n') or (eyetrack == 'no'):
             ts = PRFSession(output_str=output_str,
                             output_dir=output_dir,
                             settings_file=settings_file,
@@ -61,7 +61,7 @@ def main():
         ts.run()
 
     elif task == '2afc':
-        if (eyetrack == 'n') or (eyetrack == 'n'):
+        if (eyetrack == 'n') or (eyetrack == 'no'):
             ts = PsychophysSession(output_str=output_str,
                                    output_dir=output_dir,
                                    settings_file=settings_file,

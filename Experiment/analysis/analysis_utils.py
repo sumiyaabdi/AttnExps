@@ -39,7 +39,7 @@ def d_prime(hits, misses, fas, crs):
     return d_prime, c
 
 def d_prime_rates(hit_rate, fa_rate):
-        d_prime = Z(hit_rate) - Z(fa_rate)
+    d_prime = Z(hit_rate) - Z(fa_rate)
     c = -(Z(hit_rate) + Z(fa_rate)) / 2
     
     return d_prime, c

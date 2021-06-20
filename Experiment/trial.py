@@ -14,6 +14,67 @@ import os
 
 opj = os.path.join
 
+class BaselineTrial(Trial):
+    def __init__(self, session, trial_nr):
+        self.session = session
+        if self.session.settings['PRF stimulus settings']['Scanner sync']==True:
+            self.phase_durations = [100] #dummy value
+        else:
+            self.phase_durations = [self.session.settings['mri']['TR']]
+
+        super().__init__(session, trial_nr,self.phase_durations,verbose=False)
+    
+    def draw(self):
+        self.session.line1.draw()
+        self.session.line2.draw()
+        self.session.fix_circle.draw(0, radius=self.session.settings['small_task']['radius'])
+        
+    def get_events(self):
+         """ Logs responses/triggers """
+         events = event.getKeys(timeStamped=self.session.clock)
+         if events:
+             if 'q' in [ev[0] for ev in events]:  # specific key in settings?
+                 np.save(opj(self.session.output_dir, self.session.output_str+'_simple_response_data.npy'),
+                         {'Total subject responses': self.session.total_responses})
+                 
+                 if self.session.settings['PRF stimulus settings']['Screenshot']==True:
+                     self.session.win.saveMovieFrames(opj(self.session.screen_dir, self.session.output_str+'_Screenshot.png'))
+                     
+                 self.session.close()
+                 self.session.quit()
+ 
+             for key, t in events:
+
+                if key == self.session.mri_trigger:
+                    event_type = 'pulse'
+                        #marco edit. the second bit is a hack to avoid double-counting of the first t when simulating a scanner
+                    if self.session.settings['PRF stimulus settings']['Scanner sync']==True \
+                            and t>0.1 and self.phase == self.session.settings['attn_task']['stim_per_trial']*2-1:
+                        self.exit_phase=True
+                            #ideally, for speed, would want  getMovieFrame to be called right after the first winflip.
+                            #but this would have to be dun from inside trial.run()
+                        if self.session.settings['PRF stimulus settings']['Screenshot']==True:
+                                self.session.win.getMovieFrame()
+                else:
+                    event_type = 'response'
+                    self.session.total_responses += 1
+
+                idx = self.session.global_log.shape[0]
+                self.session.global_log.loc[idx, 'trial_nr'] = self.trial_nr
+                self.session.global_log.loc[idx, 'onset'] = t
+                self.session.global_log.loc[idx, 'event_type'] = event_type
+                self.session.global_log.loc[idx, 'phase'] = self.phase
+                self.session.global_log.loc[idx, 'response'] = key
+                self.session.global_log.loc[idx, 'large_prop'] = self.session.large_balances[get_stim_nr(self.trial_nr, self.phase, self.session.stim_per_trial)]
+                self.session.global_log.loc[idx, 'small_prop'] = self.session.small_balances[get_stim_nr(self.trial_nr, self.phase, self.session.stim_per_trial)]
+
+                for param, val in self.parameters.items():
+                    self.session.global_log.loc[idx, param] = val
+
+                if key != self.session.mri_trigger:
+                    self.last_resp = key
+                    self.last_resp_onset = t
+
 class PRFTrial(Trial):
 
     def __init__(self, session, trial_nr, bar_orientation, bar_position_in_ori,
@@ -43,11 +104,16 @@ class PRFTrial(Trial):
                          verbose=False, *args, **kwargs)
 
         #add topup time to last trial
-        if self.session.settings['mri']['topup_scan']==True:
-            if self.trial_nr == self.session.n_trials-1:
-                self.phase_durations = [self.session.settings['PRF stimulus settings']['Bar step length'] \
-                                        / (self.session.stim_per_trial * 2)] * (self.session.stim_per_trial * 2 - 1)
-                self.phase_durations.append(self.session.topup_scan_duration)
+        # if self.session.settings['mri']['topup_scan']==True:
+        #     if self.trial_nr == self.session.n_trials-1:
+        #         self.phase_durations = [self.session.settings['PRF stimulus settings']['Bar step length'] \
+        #                                 / (self.session.stim_per_trial * 2)] * (self.session.stim_per_trial * 2 - 1)
+        #         self.phase_durations.append(self.session.topup_scan_duration)
+
+        # add additional fixation time to end of task
+        # if self.trial_nr == self.session.n_trials-1:
+        #     end_blanks = int(self.session.settings['attn_task']['baseline_end']/self.session.settings['mri']['TR'] + 1)
+        #     self.phase_durations = [int(end_blanks/2),]
 
     
     def draw(self, *args, **kwargs):
