@@ -49,6 +49,7 @@ attn_task:
   signal: 6
   baseline_start: 20 #seconds
   baseline_end: 30 #seconds
+  resp_keys: [1.0, 2.0]
 
 large_task:
     n_sections: 1

@@ -1,9 +1,11 @@
+import yaml
 import pandas as pd
 from pandas.core.common import SettingWithCopyWarning
 import warnings
 warnings.simplefilter(action='ignore', category=SettingWithCopyWarning)
 import numpy as np
 import os
+opj = os.path.join
 import glob
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
@@ -16,11 +18,14 @@ Z = norm.ppf
 class AnalyseRun():
 
     def __init__(self,folder,task,attn):
-
         self.folder=folder
         self.task=task
         self.attn=attn
         self.wd = os.getcwd()
+
+        settings_f = opj(self.wd, f'expsettings/expsettings_{self.task}.yml')
+        with open(settings_f) as file:
+            self.settings = yaml.safe_load(file)
 
     def analyse2afc(self):
 
@@ -29,10 +34,13 @@ class AnalyseRun():
         sub,ses,task,run = [i.split('-')[-1] for i in self.folder.split('_')]
         sz = task[-1]
         task=task[:-1]
+        resp = self.settings['attn_task']['resp_keys']
+        resp_blue, resp_pink = [str(i).upper() for i in resp]
 
         df = pd.read_table(f,keep_default_na=True)
         df = df[df.event_type == 'response']
         df.drop(['nr_frames','duration'],axis=1,inplace=True)
+        df['response'] = df.response.astype(str)
         df['attn_size']=sz
         df['corr_L']=np.nan
         df['corr_S']=np.nan
@@ -42,13 +50,13 @@ class AnalyseRun():
         not_task = pd.DataFrame([])
 
         for prop,cor in zip(cols[0],cols[1]):
-            true_left = df[(df[prop] > 0.5) & (df.response == 'left')].index
-            false_left = df[(df[prop] < 0.5) & (df.response == 'left')].index
-            true_right = df[(df[prop] < 0.5) & (df.response == 'right')].index
-            false_right = df[(df[prop] > 0.5) & (df.response == 'right')].index
+            true_blue = df[(df[prop] > 0.5) & (df.response == resp_blue)].index
+            false_blue = df[(df[prop] < 0.5) & (df.response == resp_blue)].index
+            true_pink = df[(df[prop] < 0.5) & (df.response == resp_pink)].index
+            false_pink = df[(df[prop] > 0.5) & (df.response == resp_pink)].index
 
-            df.loc[np.hstack((true_left,true_right)), cor] = 1
-            df.loc[np.hstack((false_left,false_right)), cor] = 0
+            df.loc[np.hstack((true_blue,true_pink)), cor] = 1
+            df.loc[np.hstack((false_blue,false_pink)), cor] = 0
             df =  df.dropna(subset=[cor])
 
             diffs = sorted(df[prop].unique())
@@ -58,7 +66,7 @@ class AnalyseRun():
                 task_summary.loc[idx,'attn_size'] = prop.split('_')[0][0]
                 task_summary.loc[idx,'diff'] = diff
                 task_summary.loc[idx,'n_trials'] = len(df[df[prop] == diff])
-                task_summary.loc[idx,'resp_left'] = len(df[(df[prop] == diff ) & (df.response == "left")])/len(df[df[prop] == diff])
+                task_summary.loc[idx,'resp_blue'] = len(df[(df[prop] == diff ) & (df.response == resp_blue)])/len(df[df[prop] == diff])
                 task_summary.loc[idx,'n_correct'] = len(df[(df[prop] == diff) & (df[cor] == 1)])
                 task_summary.loc[idx,'percent_correct'] = 100*len(df[(df[prop] == diff) & (df[cor] == 1)])/len(df[df[prop] == diff])
 
@@ -70,23 +78,23 @@ class AnalyseRun():
 
         axs[0].set_title('SmallAF Performance')
         axs[0].set_ylim(0, 1)
-        axs[0].set_ylabel('Response Left')
+        axs[0].set_ylabel('Response Blue')
         axs[0].set_xlabel('% Blue')
         axs[0].scatter(self.summary[self.summary.attn_size == 's']['diff'],\
-                       self.summary[self.summary.attn_size == 's'].resp_left)
+                       self.summary[self.summary.attn_size == 's']['resp_blue'])
 
         axs[1].set_title('LargeAF Performance')
         axs[1].set_ylim(0, 1)
         axs[1].set_ylabel('Response Left')
         axs[1].set_xlabel('% Blue')
         axs[1].scatter(self.summary[self.summary.attn_size == 'l']['diff'],\
-                       self.summary[self.summary.attn_size == 'l'].resp_left)
+                       self.summary[self.summary.attn_size == 'l']['resp_blue'])
         fig.savefig(f'./logs/{self.folder}_Logs/performance.png',dpi=300)
 
         # plot sigmoid and print 20% and 80% values
 
         xdata = self.summary[self.summary.attn_size == self.attn]['diff']
-        ydata = self.summary[self.summary.attn_size == self.attn].resp_left
+        ydata = self.summary[self.summary.attn_size == self.attn]['resp_blue']
 
         popt, pcov = curve_fit(sigmoid, xdata, ydata)
 
@@ -103,7 +111,7 @@ class AnalyseRun():
         ax.set_title(f'{self.attn.upper()} AF')
         ax.plot(x, y, label='sigmoid')
         ax.set_ylim(0, 1)
-        ax.set_ylabel('Response Left')
+        ax.set_ylabel('Response Blue')
         ax.set_xlabel('% Blue')
         plt.legend(loc='best')
         fig2.savefig(f'./logs/{self.folder}_Logs/sigmoid.png',dpi=300)
