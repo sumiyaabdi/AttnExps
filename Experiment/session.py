@@ -31,11 +31,14 @@ class PRFSession(PylinkEyetrackerSession):
         super().__init__(output_str=output_str, output_dir=output_dir, settings_file=settings_file, eyetracker_on = eyetracker_on)
 
         self.bar_orientations = np.array(self.settings['PRF stimulus settings']['Bar orientations'])
+        self.start_blanks = int(self.settings['attn_task']['baseline_start']/self.settings['mri']['TR'] + 1)
         self.end_blanks = int(self.settings['attn_task']['baseline_end']/self.settings['mri']['TR'] + 1)
-        self.n_trials = 5 + self.settings['PRF stimulus settings']['Bar pass steps'] \
+        self.n_trials = self.start_blanks + \
+                        5 + self.settings['PRF stimulus settings']['Bar pass steps'] \
                         * len(np.where(self.bar_orientations != -1)[0]) \
                         + self.settings['PRF stimulus settings']['Blanks length'] \
-                        * len(np.where(self.bar_orientations == -1)[0]) + self.end_blanks
+                        * len(np.where(self.bar_orientations == -1)[0]) \
+                        + self.end_blanks
         self.stim_per_trial = self.settings['attn_task']['stim_per_trial']
         self.n_stim = self.n_trials * self.stim_per_trial
         self.trials = []
@@ -187,7 +190,11 @@ class PRFSession(PylinkEyetrackerSession):
                                                     bar_direction=self.bar_direction_at_TR[i]
                                                     ))
             else:
-                if i < self.n_trials - self.end_blanks:
+                if i < self.start_blanks:
+                    self.trials.append(BaselineTrial(session=self,
+                                            trial_nr=i
+                                            ))
+                elif self.start_blanks <= i < self.n_trials - self.end_blanks:
                     self.trials.append(PRFTrial(session=self,
                                             trial_nr=i,
                                             bar_orientation=self.bar_orientation_at_TR[i],
@@ -208,9 +215,7 @@ class PRFSession(PylinkEyetrackerSession):
     def draw_prf_stimulus(self):
         #this timing is only used for the motion of checkerboards inside the bar. it does not have any effect on the actual bar motion
         present_time = self.clock.getTime()
-        
-        #present_trial_time = self.clock.getTime() - self.current_trial_start_time
-        prf_time = present_time #/ (self.bar_step_length)
+        prf_time = present_time 
 
         # draw the bar at the required orientation for this TR, unless the orientation is -1, code for a blank period
         if self.current_trial.bar_orientation != -1:
@@ -239,9 +244,9 @@ class PRFSession(PylinkEyetrackerSession):
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
         self.display_text('', keys=self.settings['mri'].get('sync', 't'))
 
-        n_triggers = int(1 + self.settings['attn_task']['baseline_start']/self.settings['mri']['TR'])
+        # n_triggers = int(1 + self.settings['attn_task']['baseline_start']/self.settings['mri']['TR'])
 
-        self.start_experiment(wait_n_triggers=n_triggers,show_fix_during_dummies=False)
+        self.start_experiment()
 
         if self.eyetracker_on:
             self.start_recording_eyetracker()
@@ -288,3 +293,36 @@ class PsychophysSession(PRFSession):
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
         self.largeAF.draw(self.large_balances[self.stim_nr], self.stim_nr)
         self.smallAF.draw(self.small_balances[self.stim_nr], self.stim_nr)
+
+    # def run(self):
+    #     """run the session"""
+    #     # cycle through trials
+
+    #     if self.eyetracker_on:
+    #         self.calibrate_eyetracker()
+
+
+    #     self.line1.draw()
+    #     self.line2.draw()
+    #     self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
+    #     self.display_text('', keys=self.settings['mri'].get('sync', 't'))
+
+
+    #     self.start_experiment()
+
+    #     if self.eyetracker_on:
+    #         self.start_recording_eyetracker()
+        
+    #     for trial_idx in range(len(self.trials)):
+    #         self.current_trial = self.trials[trial_idx]
+    #         self.current_trial_start_time = self.clock.getTime()
+    #         self.current_trial.run()
+        
+    #     print('Total subject responses: %d'%self.total_responses)
+    #     np.save(opj(self.output_dir, self.output_str+'_simple_response_data.npy'), {'Total subject responses':self.total_responses})
+        
+        
+    #     if self.settings['PRF stimulus settings']['Screenshot']==True:
+    #         self.win.saveMovieFrames(opj(self.screen_dir, self.output_str+'_Screenshot.png'))
+            
+    #     self.close()

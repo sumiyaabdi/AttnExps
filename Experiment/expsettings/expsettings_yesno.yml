@@ -4,7 +4,7 @@ preferences:
         units: deg
 
 window:
-    size: [1440, 900] #[1920, 1080] #
+    size: [1920, 1080] #[1440, 900] #
     pos: [0, 0]
     color: [0, 0, 0]
     fullscr: False

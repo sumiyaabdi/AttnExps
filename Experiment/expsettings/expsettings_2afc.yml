@@ -4,7 +4,7 @@ preferences:
         units: deg
 
 window:
-    size: [1920, 1080] # [1440, 900] # 
+    size: [1920, 1080] #[1440, 900] #
     pos: [0, 0]
     color: [0, 0, 0]
     fullscr: True
@@ -27,7 +27,7 @@ eyetracker:
 
 mri:
     TR: 1.5  # seconds between volume acquisitions
-    topup_scan: True
+    topup_scan: False
     topup_duration: 45 # topup scan duration in seconds (no 't's)
 
     #only relevant for scanning simulations
@@ -47,7 +47,8 @@ psychophysics:
 attn_task:
   stim_per_trial: 2
   signal: 6
-
+  baseline_start: 20 #seconds
+  baseline_end: 30 #seconds
 
 large_task:
     n_sections: 1

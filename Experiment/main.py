@@ -15,13 +15,9 @@ from datetime import datetime
 datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 def main():
-    subject = sys.argv[1]
-    sess =  sys.argv[2]
-    # 5 conditions: PRF2R, PRF1R, PRF1S, PRF4R, PRF4F 
-    #(2 squares Regular speed, 1 square Regular, 1 square Slow, 4 square Regular, 4 square Fast)
-    # task = sys.argv[3]
-    #in the full experiment we would do 3 runs
-    run = sys.argv[3]
+    subject = sys.argv[1] # e.g. sub-001
+    sess =  sys.argv[2] # e.g. 1
+    run = sys.argv[3] # e.g. 0
 
     task = ''
     while task not in ('2afc', 'yesno'):

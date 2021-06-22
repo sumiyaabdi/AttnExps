@@ -1,6 +1,9 @@
 #and so on
 __pycache__/
 logs/
+.idea/
+.gitignore
 
 #macbook stuff
 .DS_Store
+
