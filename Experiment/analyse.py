@@ -27,6 +27,8 @@ class AnalyseRun():
         with open(settings_f) as file:
             self.settings = yaml.safe_load(file)
 
+        self.resp_keys = self.settings['attn_task']['resp_keys']
+
     def analyse2afc(self):
 
         f = glob.glob(f"{self.wd}/logs/{self.folder}_Logs/*.tsv")[0]
@@ -34,13 +36,12 @@ class AnalyseRun():
         sub,ses,task,run = [i.split('-')[-1] for i in self.folder.split('_')]
         sz = task[-1]
         task=task[:-1]
-        resp = self.settings['attn_task']['resp_keys']
-        resp_blue, resp_pink = [str(i).upper() for i in resp]
+        resp_blue, resp_pink = [str(i).upper() for i in self.resp_keys]
 
         df = pd.read_table(f,keep_default_na=True)
         df = df[df.event_type == 'response']
         df.drop(['nr_frames','duration'],axis=1,inplace=True)
-        df['response'] = df.response.astype(str)
+        df['response'] = df.response.astype(str).apply(lambda x:x.lower())
         df['attn_size']=sz
         df['corr_L']=np.nan
         df['corr_S']=np.nan
@@ -96,15 +97,19 @@ class AnalyseRun():
         fig2, axs = plt.subplots(1, 2, figsize=(12, 4))
         fig2.suptitle(f'Attention Condition: {self.attn.upper()}', fontsize=14)
 
-        for i,at in enumerate(['s', 'l']):
+        for i,at in enumerate(['s','l']):
             xdata = self.summary[self.summary.attn_size == at]['diff']
             ydata = self.summary[self.summary.attn_size == at]['resp_blue']
-            popt, pcov = curve_fit(sigmoid, xdata, ydata)
-            val = (abs(0.5 - inv_sigmoid(.2, *popt)) + abs(0.5 - inv_sigmoid(.2, *popt))) / 2
+            try:
+                popt, pcov = curve_fit(sigmoid, xdata, ydata)
+            except RuntimeError:
+                print(f"\nError - {at.upper()} curve fit failed")
+                continue
+            val = (abs(0.5 - inv_sigmoid(.1, *popt)) + abs(0.5 - inv_sigmoid(.9, *popt))) / 2
 
             print(f'\nATTN: {at.upper()}\
                 \nSigmoid mid-point: {inv_sigmoid(.5, *popt):.3f}\
-                \nYes/No Values: {0.5 + val:.3f} , {0.5 - val:.3f}')
+                \nYes/No Values: {0.5 + val:.3f} , {0.5 - val:.3f}\n')
 
             x = np.linspace(0, 1, 20)
             y = sigmoid(x, *popt)
@@ -129,6 +134,7 @@ class AnalyseRun():
         sz = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5
         duration = 1
+        # resp = str(self.resp_keys[0])[0]
 
         df = pd.read_table(glob.glob(fname)[0], keep_default_na=True)
         df = df.drop(
@@ -137,11 +143,13 @@ class AnalyseRun():
         df['nr_frames'] = df['nr_frames'].fillna(0)
         df['end'] = df.onset + df.duration
         df['end_abs'] = df.onset_abs + df.duration
+        df['response'] = df.response.astype(str).apply(lambda x:x.lower())
+        resp = df.response.unique()[1]
 
         stim_df = df[df.event_type == 'stim']
         switch_loc = np.diff(stim_df[sz], prepend=baseline) != 0
         switch_loc = stim_df[(switch_loc) & (stim_df[sz] != baseline)].index  # drop values where color_balance is 0.5
-        responses = df.loc[df.response == 'space']
+        responses = df.loc[df.response == resp]
 
         tp = sum([(abs(i - responses.onset) < duration).any() \
                   for i in stim_df.loc[switch_loc].end])  # true positives
