@@ -73,47 +73,52 @@ class AnalyseRun():
             self.summary = self.summary.append(task_summary, ignore_index=True)
 
     def plot2afc(self):
-        fig, axs = plt.subplots(1, 2, figsize=(12, 4))
-        fig.suptitle(f'ATTENTION SIZE: {self.attn.upper()}', fontsize=16)
+        # fig, axs = plt.subplots(1, 2, figsize=(12, 4))
+        # fig.suptitle(f'ATTENTION SIZE: {self.attn.upper()}', fontsize=16)
 
-        axs[0].set_title('SmallAF Performance')
-        axs[0].set_ylim(0, 1)
-        axs[0].set_ylabel('Response Blue')
-        axs[0].set_xlabel('% Blue')
-        axs[0].scatter(self.summary[self.summary.attn_size == 's']['diff'],\
-                       self.summary[self.summary.attn_size == 's']['resp_blue'])
+        # axs[0].set_title('SmallAF Performance')
+        # axs[0].set_ylim(0, 1)
+        # axs[0].set_ylabel('Response Blue')
+        # axs[0].set_xlabel('% Blue')
+        # axs[0].scatter(self.summary[self.summary.attn_size == 's']['diff'],\
+        #                self.summary[self.summary.attn_size == 's']['resp_blue'])
 
-        axs[1].set_title('LargeAF Performance')
-        axs[1].set_ylim(0, 1)
-        axs[1].set_ylabel('Response Left')
-        axs[1].set_xlabel('% Blue')
-        axs[1].scatter(self.summary[self.summary.attn_size == 'l']['diff'],\
-                       self.summary[self.summary.attn_size == 'l']['resp_blue'])
-        fig.savefig(f'./logs/{self.folder}_Logs/performance.png',dpi=300)
+        # axs[1].set_title('LargeAF Performance')
+        # axs[1].set_ylim(0, 1)
+        # axs[1].set_ylabel('Response Left')
+        # axs[1].set_xlabel('% Blue')
+        # axs[1].scatter(self.summary[self.summary.attn_size == 'l']['diff'],\
+        #                self.summary[self.summary.attn_size == 'l']['resp_blue'])
+        # fig.savefig(f'./logs/{self.folder}_Logs/performance.png',dpi=300)
 
         # plot sigmoid and print 20% and 80% values
 
-        xdata = self.summary[self.summary.attn_size == self.attn]['diff']
-        ydata = self.summary[self.summary.attn_size == self.attn]['resp_blue']
+        fig2, axs = plt.subplots(1, 2, figsize=(12, 4))
+        fig2.suptitle(f'Attention Condition: {self.attn.upper()}', fontsize=14)
 
-        popt, pcov = curve_fit(sigmoid, xdata, ydata)
+        for i,at in enumerate(['s', 'l']):
+            xdata = self.summary[self.summary.attn_size == at]['diff']
+            ydata = self.summary[self.summary.attn_size == at]['resp_blue']
+            popt, pcov = curve_fit(sigmoid, xdata, ydata)
+            val = (abs(0.5 - inv_sigmoid(.2, *popt)) + abs(0.5 - inv_sigmoid(.2, *popt))) / 2
 
-        val = (abs(0.5 - inv_sigmoid(.2, *popt)) + abs(0.5 - inv_sigmoid(.2, *popt))) / 2
-
-        print(f'\nSigmoid mid-point: {inv_sigmoid(.5, *popt):.3f}\
+            print(f'\nATTN: {at.upper()}\
+                \nSigmoid mid-point: {inv_sigmoid(.5, *popt):.3f}\
                 \nYes/No Values: {0.5 + val:.3f} , {0.5 - val:.3f}')
 
-        x = np.linspace(0, 1, 20)
-        y = sigmoid(x, *popt)
+            x = np.linspace(0, 1, 20)
+            y = sigmoid(x, *popt)
 
-        fig2, ax = plt.subplots(1, 1, figsize=(8, 6))
-        ax.plot(xdata, ydata, 'o', label='data')
-        ax.set_title(f'{self.attn.upper()} AF')
-        ax.plot(x, y, label='sigmoid')
-        ax.set_ylim(0, 1)
-        ax.set_ylabel('Response Blue')
-        ax.set_xlabel('% Blue')
-        plt.legend(loc='best')
+            
+            axs[i].plot(xdata, ydata, 'o', label='data')
+            axs[i].set_title(f'{at.upper()} Performance', fontsize=9)
+            axs[i].plot(x, y, label='sigmoid')
+            axs[i].set_ylim(0, 1)
+            axs[i].set_ylabel('Response Blue')
+            axs[i].set_xlabel('% Blue')
+            plt.legend(loc='best')          
+
+
         fig2.savefig(f'./logs/{self.folder}_Logs/sigmoid.png',dpi=300)
 
         plt.show()
