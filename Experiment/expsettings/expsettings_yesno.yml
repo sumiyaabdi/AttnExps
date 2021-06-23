@@ -7,7 +7,7 @@ window:
     size: [1920, 1080] #[1440, 900] #
     pos: [0, 0]
     color: [0, 0, 0]
-    fullscr: True
+    fullscr: False
     winType: pyglet
     waitBlanking: True
 
@@ -26,14 +26,14 @@ eyetracker:
     model: eyelink
 
 mri:
-    TR: 1.2  # seconds between volume acquisitions
+    TR: 1.5  # seconds between volume acquisitions
     topup_scan: True
     topup_duration: 45 # topup scan duration in seconds (no 't's)
 
     #only relevant for scanning simulations
     simulate: True #set this to true to simulate a virtual scanner
-    TA: 1.2  # seconds to acquire one volume
-    volumes: 268  # number of 3D volumes to obtain in a given scanning run
+    TA: 1.5  # seconds to acquire one volume
+    volumes: 260  # number of 3D volumes to obtain in a given scanning run
     sync: t  # character used as flag for simulation sync timing, default=‘5’
     skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
     sound: False  # simulate scanner noise
@@ -90,5 +90,5 @@ PRF stimulus settings:
     Bar width in degrees: 1.25
     Checkers motion speed: 3          # checkers motion speed. direction is randomly up/down at each bar step
     Size fixation dot in degrees: 0.05 # dot changes color on average every two TRs (or bar steps)
-    Bar step length: 1.2            # in seconds. this is only used if Scanner sync is set to False
+    Bar step length: 1.5            # in seconds. this is only used if Scanner sync is set to False
     contrast: 0.5

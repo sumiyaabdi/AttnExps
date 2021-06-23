@@ -48,8 +48,7 @@ class BaselineTrial(Trial):
                 if key == self.session.mri_trigger:
                     event_type = 'pulse'
                         #marco edit. the second bit is a hack to avoid double-counting of the first t when simulating a scanner
-                    if self.session.settings['PRF stimulus settings']['Scanner sync']==True \
-                            and t>0.1 and self.phase == self.session.settings['attn_task']['stim_per_trial']*2-1:
+                    if self.session.settings['PRF stimulus settings']['Scanner sync']==True and t>0.1:
                         self.exit_phase=True
                             #ideally, for speed, would want  getMovieFrame to be called right after the first winflip.
                             #but this would have to be dun from inside trial.run()
@@ -91,10 +90,10 @@ class PRFTrial(Trial):
         else:
             #here we decide how to go from each trial (bar position) to the next.
             if self.session.settings['PRF stimulus settings']['Scanner sync']==True:
-                #dummy value: if scanning or simulating a scanner, everything is synced to the output 't' of the scanner
+                # phase duration is determined by number of stimulus
                 self.phase_durations = [self.session.settings['PRF stimulus settings']['Bar step length']\
                                        /(self.session.stim_per_trial*2)]*(self.session.stim_per_trial*2-1)
-                self.phase_durations.append(100) # only last phase needs dummy value
+                self.phase_durations.append(100) # only last phase needs dummy value to wait for 't' 
             else:
                 #if not synced to a real or simulated scanner, take the bar pass step as length
                 self.phase_durations = [self.session.settings['PRF stimulus settings']['Bar step length']\
