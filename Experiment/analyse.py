@@ -101,74 +101,35 @@ class AnalyseRun():
     def analyseYesNo(self):
         print(self.wd)
         fname = f'{self.wd}/logs/{self.folder}_Logs/*.tsv'
-        sz = 'large_prop' if self.attn == 'l' else 'small_prop'
+        # sz = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5
         duration = 1
-        # resp = str(self.resp_keys[0])[0]
+        resp = str(self.resp_keys[0])[0]
 
-        df = pd.read_table(glob.glob(fname)[0], keep_default_na=True)
-        df = df.drop(
-            df[(df.phase % 2 == 1) & (df.event_type == 'stim')].index.append(df[df.event_type == 'pulse'].index))
-        df['duration'] = df['duration'].fillna(0)
-        df['nr_frames'] = df['nr_frames'].fillna(0)
-        df['end'] = df.onset + df.duration
-        df['end_abs'] = df.onset_abs + df.duration
-        df['response'] = df.response.astype(str).apply(lambda x:x.lower())
-        resp = df.response.unique()[1]
+        print(f'\nCondition: {self.attn.upper()}')
 
-        stim_df = df[df.event_type == 'stim']
-        switch_loc = np.diff(stim_df[sz], prepend=baseline) != 0
-        switch_loc = stim_df[(switch_loc) & (stim_df[sz] != baseline)].index  # drop values where color_balance is 0.5
-        responses = df.loc[df.response == resp]
+        for sz in ['small_prop', 'large_prop']:
 
-        tp = sum([(abs(i - responses.onset) < duration).any() \
-                  for i in stim_df.loc[switch_loc].end])  # true positives
-        fn = len(switch_loc) - tp  # false negatives (missed switches)
-        fp = len(responses) - tp  # false positives (responded with no switch)
-        tn = len(stim_df) - len(switch_loc) - fn  # true negative
+            df = pd.read_table(glob.glob(fname)[0], keep_default_na=True)
+            df = df.drop(
+                df[(df.phase % 2 == 1) & (df.event_type == 'stim')].index.append(df[df.event_type == 'pulse'].index))
+            df['duration'] = df['duration'].fillna(0)
+            df['nr_frames'] = df['nr_frames'].fillna(0)
+            df['end'] = df.onset + df.duration
+            df['end_abs'] = df.onset_abs + df.duration
+            df['response'] = df.response.astype(str).apply(lambda x:x.lower())
 
-        d, c = d_prime(tp, fn, fp, tn)
+            stim_df = df[df.event_type == 'stim']
+            switch_loc = np.diff(stim_df[sz], prepend=baseline) != 0
+            switch_loc = stim_df[(switch_loc) & (stim_df[sz] != baseline)].index  # drop values where color_balance is 0.5
+            responses = df.loc[df.response == resp]
 
-        print(f"D': {d:.3f}, C: {c:.3f}")
+            tp = sum([(abs(i - responses.onset) < duration).any() \
+                    for i in stim_df.loc[switch_loc].end])  # true positives
+            fn = len(switch_loc) - tp  # false negatives (missed switches)
+            fp = len(responses) - tp  # false positives (responded with no switch)
+            tn = len(stim_df) - len(switch_loc) - fn  # true negative
 
-# def sigmoid(x,x0,k):
-#     y = np.array(1 / (1 + np.exp(-k*(x-x0))))
-#     return y
+            d, c = d_prime(tp, fn, fp, tn)
 
-# def weibull(x,x0,k,g,l):
-#     y = g +(1-g -l)*sigmoid(x,k)
-#     return y
-
-# def inv_sigmoid(y,x0,k):
-#     return x0 - (np.log((1/y)-1)/k)
-
-# def d_prime(hits, misses, fas, crs):
-#     """
-#     calculate d' from hits(tp), misses(fn), false
-#     alarms (fp), and correct rejections (tn)
-
-#     returns: d_prime
-#     """
-
-#     half_hit = 0.5 / (hits + misses)
-#     half_fa = 0.5 / (fas + crs)
-
-#     hit_rate = hits / (hits + misses)
-#     fa_rate = fas / (fas + crs)
-
-#     # avoid d' infinity
-#     if hit_rate == 1:
-#         hit_rate = 1 - half_hit
-#     elif hit_rate == 0:
-#         hit_rate = half_hit
-
-#     if fa_rate == 1:
-#         fa_rate = 1 - half_fa
-#     elif fa_rate == 0:
-#         fa_rate = half_fa
-
-#     d_prime = Z(hit_rate) - Z(fa_rate)
-#     c = -(Z(hit_rate) + Z(fa_rate)) / 2
-#     #     print(f'Hit rate: \t {hit_rate} \nFalse Alarm rate: {fa_rate}')
-
-#     return d_prime, c
+            print(f"{sz.split('_')[0].upper()} D': {d:.3f}, C: {c:.3f}\n")

@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.stats import norm
+Z = norm.ppf
 
 def psyc_stim_list(stim_range, n_stim, baseline):
     " Creates stim list for psychophysics task"
