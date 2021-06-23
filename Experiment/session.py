@@ -38,7 +38,7 @@ class PRFSession(PylinkEyetrackerSession):
                         * len(np.where(self.bar_orientations != -1)[0]) \
                         + self.settings['PRF stimulus settings']['Blanks length'] \
                         * len(np.where(self.bar_orientations == -1)[0]) \
-                        + self.end_blanks
+                        + self.end_blanks -1
         print(f'Ntrials: {self.n_trials}, end_blanks: {self.end_blanks}')
         self.stim_per_trial = self.settings['attn_task']['stim_per_trial']
         self.n_stim = self.n_trials * self.stim_per_trial

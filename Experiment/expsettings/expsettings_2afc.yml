@@ -50,6 +50,7 @@ attn_task:
   baseline_start: 20 #seconds
   baseline_end: 30 #seconds
   resp_keys: [1.0, 2.0]
+  interp_values: [0.1,0.9]
 
 large_task:
     n_sections: 1

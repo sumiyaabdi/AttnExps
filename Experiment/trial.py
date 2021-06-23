@@ -84,6 +84,7 @@ class PRFTrial(Trial):
         self.bar_position_in_ori = bar_position_in_ori
         self.bar_direction = bar_direction
         self.session = session
+        self.trial_nr = trial_nr
 
         if self.session.settings['psychophysics']['task'] == True:
             self.phase_durations = [100]
@@ -94,6 +95,10 @@ class PRFTrial(Trial):
                 self.phase_durations = [self.session.settings['PRF stimulus settings']['Bar step length']\
                                        /(self.session.stim_per_trial*2)]*(self.session.stim_per_trial*2-1)
                 self.phase_durations.append(100) # only last phase needs dummy value to wait for 't' 
+
+                if self.trial_nr == self.session.n_trials-1: # no long last phase duration for last trial
+                    self.phase_durations =[self.session.settings['PRF stimulus settings']['Bar step length']\
+                                       /(self.session.stim_per_trial*2)]*(self.session.stim_per_trial*2)
             else:
                 #if not synced to a real or simulated scanner, take the bar pass step as length
                 self.phase_durations = [self.session.settings['PRF stimulus settings']['Bar step length']\
