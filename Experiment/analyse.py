@@ -101,25 +101,27 @@ class AnalyseRun():
     def analyseYesNo(self):
         print(self.wd)
         fname = f'{self.wd}/logs/{self.folder}_Logs/*.tsv'
-        # sz = 'large_prop' if self.attn == 'l' else 'small_prop'
+        cond = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5
         duration = 1
         resp = str(self.resp_keys[0])[0]
 
-        print(f'\nCondition: {self.attn.upper()}')
+        df = pd.read_table(glob.glob(fname)[0], keep_default_na=True)
+        df = df.drop(
+            df[(df.phase % 2 == 1) & (df.event_type == 'stim')].index.append(df[df.event_type == 'pulse'].index))
+        df['duration'] = df['duration'].fillna(0)
+        df['nr_frames'] = df['nr_frames'].fillna(0)
+        df['end'] = df.onset + df.duration
+        df['end_abs'] = df.onset_abs + df.duration
+        df['response'] = df.response.astype(str).apply(lambda x:x.lower())
+        stim_df = df[df.event_type == 'stim']
+
+        prop_values = df[cond].unique()[1:-1]
+
+        print(f'\nAttention {self.attn.upper()}\nProportions: {prop_values}\n')
 
         for sz in ['small_prop', 'large_prop']:
 
-            df = pd.read_table(glob.glob(fname)[0], keep_default_na=True)
-            df = df.drop(
-                df[(df.phase % 2 == 1) & (df.event_type == 'stim')].index.append(df[df.event_type == 'pulse'].index))
-            df['duration'] = df['duration'].fillna(0)
-            df['nr_frames'] = df['nr_frames'].fillna(0)
-            df['end'] = df.onset + df.duration
-            df['end_abs'] = df.onset_abs + df.duration
-            df['response'] = df.response.astype(str).apply(lambda x:x.lower())
-
-            stim_df = df[df.event_type == 'stim']
             switch_loc = np.diff(stim_df[sz], prepend=baseline) != 0
             switch_loc = stim_df[(switch_loc) & (stim_df[sz] != baseline)].index  # drop values where color_balance is 0.5
             responses = df.loc[df.response == resp]
@@ -132,4 +134,4 @@ class AnalyseRun():
 
             d, c = d_prime(tp, fn, fp, tn)
 
-            print(f"{sz.split('_')[0].upper()} D': {d:.3f}, C: {c:.3f}\n")
+            print(f"{sz.split('_')[0]} D': {d:.3f}, C: {c:.3f}\n")
