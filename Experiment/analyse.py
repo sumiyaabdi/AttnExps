@@ -117,7 +117,7 @@ class AnalyseRun():
 
         prop_values = df[cond].unique()[1:-1]
 
-        print(f'\nAttention {self.attn.upper()}\nProportions: {prop_values}\n')
+        print(f'\nAttention {self.attn.upper()}\nProportions: {prop_values}\nResponse Keys: {df.response.unique()}\n')
 
         for sz in ['small_prop', 'large_prop']:
 

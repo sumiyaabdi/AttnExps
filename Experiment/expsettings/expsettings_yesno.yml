@@ -7,7 +7,7 @@ window:
     size: [1920, 1080] #[1440, 900] #
     pos: [0, 0]
     color: [0, 0, 0]
-    fullscr: False
+    fullscr: True
     winType: pyglet
     waitBlanking: True
 
@@ -49,8 +49,8 @@ attn_task:
   signal: 12
   baseline_start: 20 #seconds
   baseline_end: 30 #seconds
-  resp_keys: [1.0, 2.0]
-  interp_values: [0.1,0.9]
+  resp_keys: ['b', 'y']
+  interp_values: [0.15,0.85]
 
 large_task:
     n_sections: 1
@@ -60,7 +60,7 @@ large_task:
     color1: [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.9 , 0.1]
+    color_range: [0.716 , 0.284]
     jitter: 0.15
     padding: 0 # degrees
 
@@ -73,7 +73,7 @@ small_task:
     color1:  [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.9 , 0.1]
+    color_range: [0.618 , 0.382]
 
 fixation stim:
   line_color: black
