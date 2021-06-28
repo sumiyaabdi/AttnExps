@@ -296,36 +296,3 @@ class PsychophysSession(PRFSession):
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
         self.largeAF.draw(self.large_balances[self.stim_nr], self.stim_nr)
         self.smallAF.draw(self.small_balances[self.stim_nr], self.stim_nr)
-
-    # def run(self):
-    #     """run the session"""
-    #     # cycle through trials
-
-    #     if self.eyetracker_on:
-    #         self.calibrate_eyetracker()
-
-
-    #     self.line1.draw()
-    #     self.line2.draw()
-    #     self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
-    #     self.display_text('', keys=self.settings['mri'].get('sync', 't'))
-
-
-    #     self.start_experiment()
-
-    #     if self.eyetracker_on:
-    #         self.start_recording_eyetracker()
-        
-    #     for trial_idx in range(len(self.trials)):
-    #         self.current_trial = self.trials[trial_idx]
-    #         self.current_trial_start_time = self.clock.getTime()
-    #         self.current_trial.run()
-        
-    #     print('Total subject responses: %d'%self.total_responses)
-    #     np.save(opj(self.output_dir, self.output_str+'_simple_response_data.npy'), {'Total subject responses':self.total_responses})
-        
-        
-    #     if self.settings['PRF stimulus settings']['Screenshot']==True:
-    #         self.win.saveMovieFrames(opj(self.screen_dir, self.output_str+'_Screenshot.png'))
-            
-    #     self.close()

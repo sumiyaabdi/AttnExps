@@ -17,11 +17,17 @@ opj = os.path.join
 class BaselineTrial(Trial):
     def __init__(self, session, trial_nr):
         self.session = session
+        self.trial_nr = trial_nr
+        
         if self.session.settings['PRF stimulus settings']['Scanner sync']==True:
-            self.phase_durations = [100] #dummy value
+            if self.trial_nr == self.session.n_trials:
+                print(self.trial_nr, self.session.n_trials)
+                self.phase_durations = [1.5]
+            else:
+                self.phase_durations = [100] #dummy value
         else:
             self.phase_durations = [self.session.settings['mri']['TR']]
-
+        
         super().__init__(session, trial_nr,self.phase_durations,verbose=False)
     
     def draw(self):
@@ -44,6 +50,8 @@ class BaselineTrial(Trial):
                  self.session.quit()
  
              for key, t in events:
+                if t >= 390:
+                    self.exit_phase = True
 
                 if key == self.session.mri_trigger:
                     event_type = 'pulse'

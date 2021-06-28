@@ -99,7 +99,6 @@ class AnalyseRun():
 
 
     def analyseYesNo(self):
-        print(self.wd)
         fname = f'{self.wd}/logs/{self.folder}_Logs/*.tsv'
         cond = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5

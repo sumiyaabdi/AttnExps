@@ -6,6 +6,7 @@ Created on Mon Feb 25 14:04:44 2019
 @author: marcoaqil
 """
 import sys
+import yaml
 from session import PRFSession, PsychophysSession
 from analyse import *
 from datetime import datetime
@@ -41,6 +42,14 @@ def main():
         output_dir = output_dir + datetime.now().strftime('%Y%m%d%H%M%S')
 
     settings_file='expsettings/expsettings_'+task+'.yml'
+    with open(settings_file) as file:
+        settings = yaml.safe_load(file)
+    
+    # print color range for task
+    if attn == 's' and task == 'yesno':
+        print(f"\nColor Range: {settings['small_task']['color_range']}")
+    elif attn == 'l' and task == 'yesno':
+        print(f"\nColor Range: {settings['large_task']['color_range']}")
 
     if len(sys.argv) < 5:
         if task == 'yesno':
