@@ -56,11 +56,11 @@ class AttSizeStim():
         self.draw_ring = draw_ring
         self.color1 = color1
         self.color2 = color2
+        self.jitter = jitter
 
         total_rings = self.n_sections * (n_rings + 1) + 1
 
         # eccentricities for each ring of dots in degrees
-
         if ecc_min != 0:
             ring_eccs = np.linspace(ecc_min, ecc_max, total_rings, endpoint=True)
         else:
@@ -72,38 +72,32 @@ class AttSizeStim():
         blob_sizes = ring_sizes * row_spacing_factor
 
         circles_per_ring = ((2 * np.pi * ring_eccs[1:]) / ring_sizes).astype(int)
+        n_small_jitter = circles_per_ring[0] #inner 2 rings should have smaller jitter
 
         element_array_np = []
         ring_nr = 1
 
         for ecc, cpr, s in zip(ring_eccs[:], circles_per_ring[:], blob_sizes[:]):
+            if ecc in ring_eccs[:3]:
+                cpr = int(cpr-3)
             if not ring_nr in section_positions:
                 ring_condition = np.floor(n_sections * ring_nr / total_rings)
                 for pa in np.linspace(0, 2 * np.pi, cpr, endpoint=False):
                     x, y = tools.coordinatetools.pol2cart(pa, ecc, units=None)
-                    if jitter != None:
-                        jitter_list = np.linspace(-jitter, jitter, 10)
-                        if ecc == ring_eccs[0]:
-                            element_array_np.append([x+np.random.choice(jitter_list)/2,
-                                                y+np.random.choice(jitter_list),
-                                                ecc,
-                                                pa,
-                                                s,
-                                                1, 1, 1, 0.2, ring_nr, ring_condition])
-                        else:
-                            element_array_np.append([x+np.random.choice(jitter_list),
-                                             y+np.random.choice(jitter_list),
-                                             ecc,
-                                             pa,
-                                             s,
-                                             1, 1, 1, 0.2, ring_nr, ring_condition])
+                    if ecc == ring_eccs[0]:
+                        element_array_np.append([x,
+                                            y,
+                                            ecc,
+                                            pa,
+                                            s,
+                                            1, 1, 1, 0.2, ring_nr, ring_condition])
                     else:
                         element_array_np.append([x,
-                                                 y,
-                                                 ecc,
-                                                 pa,
-                                                 s,
-                                                 1, 1, 1, 0.2, ring_nr, ring_condition])
+                                            y,
+                                            ecc,
+                                            pa,
+                                            s,
+                                            1, 1, 1, 0.2, ring_nr, ring_condition])
 
             ring_nr += 1
 
@@ -122,6 +116,10 @@ class AttSizeStim():
 
         # intialize array of color orders for each trial
         n_elements =  sum(self.element_array_np[:, -1] == 0)
+        if self.jitter != None:
+            self.j=np.concatenate((np.random.uniform(-self.jitter/2,self.jitter/2,[self.session.n_stim,n_small_jitter,2]),\
+                                np.random.uniform(-self.jitter,self.jitter,[self.session.n_stim,len(self.element_array_np)-n_small_jitter,2])),\
+                                axis=1)
 
         self.color_orders = []
         for i in range(session.n_stim):
@@ -133,6 +131,9 @@ class AttSizeStim():
 
 
     def draw(self, color_balance, stim_nr):
+        if self.jitter != None:
+            self.element_array_stim.setXYs(self.element_array_np[:,[0,1]]+self.j[stim_nr])
+
         this_ring_bool = self.element_array_np[:, -1] == 0
         nr_elements_in_condition = this_ring_bool.sum()
         nr_signal_elements = int(nr_elements_in_condition * color_balance)

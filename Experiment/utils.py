@@ -14,9 +14,32 @@ def get_stim_nr(trial,phase,stim_per_trial):
     phase = phase-1 if phase % 2 == 1 else phase
     return int(trial * stim_per_trial + (phase)/2)
 
+# def create_dot_grid(xy,jitter, n_stim):
+
+#     """
+
+#     Creates an n-Darray of xy coordinates of dot grid for 
+#     main attention (i.e. detection) task.
+
+#     Parameters
+#     ----------
+#     xy (2D array)  : 
+#     jitter (float) :
+#     n_stim (int)    :
+
+
+#     Returns
+#     -------
+
+#     xys (n,x,y):    array of length n-trials containing xy 
+#                     coordinates for each dot
+#     """
+
+#     np.random.uniform(-jitter/2,jitter/2)
+
+
 def create_stim_list(n, signal, values,midpoint):
     """
-
     Creates stim list for main attention (i.e. detection)
     task.
 

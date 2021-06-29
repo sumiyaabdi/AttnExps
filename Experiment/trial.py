@@ -20,11 +20,11 @@ class BaselineTrial(Trial):
         self.trial_nr = trial_nr
         
         if self.session.settings['PRF stimulus settings']['Scanner sync']==True:
-            if self.trial_nr == self.session.n_trials:
+            if self.trial_nr == self.session.n_trials-1:
                 print(self.trial_nr, self.session.n_trials)
                 self.phase_durations = [1.5]
             else:
-                self.phase_durations = [100] #dummy value
+                self.phase_durations = [50] #dummy value
         else:
             self.phase_durations = [self.session.settings['mri']['TR']]
         
@@ -115,17 +115,6 @@ class PRFTrial(Trial):
         super().__init__(session, trial_nr, self.phase_durations,
                          verbose=False, *args, **kwargs)
 
-        #add topup time to last trial
-        # if self.session.settings['mri']['topup_scan']==True:
-        #     if self.trial_nr == self.session.n_trials-1:
-        #         self.phase_durations = [self.session.settings['PRF stimulus settings']['Bar step length'] \
-        #                                 / (self.session.stim_per_trial * 2)] * (self.session.stim_per_trial * 2 - 1)
-        #         self.phase_durations.append(self.session.topup_scan_duration)
-
-        # add additional fixation time to end of task
-        # if self.trial_nr == self.session.n_trials-1:
-        #     end_blanks = int(self.session.settings['attn_task']['baseline_end']/self.session.settings['mri']['TR'] + 1)
-        #     self.phase_durations = [int(end_blanks/2),]
 
     
     def draw(self, *args, **kwargs):

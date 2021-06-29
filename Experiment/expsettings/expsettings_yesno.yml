@@ -31,7 +31,7 @@ mri:
     topup_duration: 45 # topup scan duration in seconds (no 't's)
 
     #only relevant for scanning simulations
-    simulate: True #set this to true to simulate a virtual scanner
+    simulate: False #set this to true to simulate a virtual scanner
     TA: 1.5  # seconds to acquire one volume
     volumes: 260  # number of 3D volumes to obtain in a given scanning run
     sync: t  # character used as flag for simulation sync timing, default=‘5’
@@ -74,6 +74,7 @@ small_task:
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
     color_range: [0.618 , 0.382]
+    jitter: None
 
 fixation stim:
   line_color: black

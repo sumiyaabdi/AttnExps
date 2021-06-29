@@ -108,7 +108,7 @@ class PRFSession(PylinkEyetrackerSession):
 
         self.largeAF = AttSizeStim(self,
                                    n_sections=self.settings['large_task']['n_sections'],
-                                   ecc_min=self.settings['small_task']['radius']*4,
+                                   ecc_min=self.settings['small_task']['radius']*5,
                                    ecc_max= np.sqrt((tools.monitorunittools.pix2deg(self.screen[0],self.monitor)/2)**2 \
                                             + (tools.monitorunittools.pix2deg(self.screen[0],self.monitor)/2)**2), # radius
                                    n_rings=self.settings['large_task']['n_rings'],
@@ -246,9 +246,7 @@ class PRFSession(PylinkEyetrackerSession):
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
         self.display_text('', keys=self.settings['mri'].get('sync', 't'))
 
-        n_triggers = int(1 + self.settings['attn_task']['baseline_start']/self.settings['mri']['TR'])
-
-        self.start_experiment() # wait_n_triggers=n_triggers,show_fix_during_dummies=False
+        self.start_experiment()
 
         if self.eyetracker_on:
             self.start_recording_eyetracker()
