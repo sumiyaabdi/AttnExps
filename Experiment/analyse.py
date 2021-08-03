@@ -38,7 +38,7 @@ class AnalyseRun():
         sub,ses,task,run = [i.split('-')[-1] for i in self.folder.split('_')]
         sz = task[-1]
         task=task[:-1]
-        resp_blue, resp_pink = [str(i).upper() for i in self.resp_keys]
+        resp_blue, resp_pink = [str(i).lower() for i in self.resp_keys]
 
         df = pd.read_table(f,keep_default_na=True)
         df = df[df.event_type == 'response']

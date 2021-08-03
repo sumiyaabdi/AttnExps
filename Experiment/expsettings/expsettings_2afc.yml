@@ -49,7 +49,7 @@ attn_task:
   signal: 6
   baseline_start: 20 #seconds
   baseline_end: 30 #seconds
-  resp_keys: ['b', 'y']
+  resp_keys: [1.0, 2.0] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
   interp_values: [0.15,0.85]
 
 large_task:
