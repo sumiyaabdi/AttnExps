@@ -24,7 +24,7 @@ class AnalyseRun():
         self.attn=attn
         self.wd = os.getcwd()
 
-        settings_f = opj(self.wd, f'expsettings/expsettings_{self.task}.yml')
+        settings_f = opj(self.wd, f'expsettings/trainsettings_{self.task}.yml')
         with open(settings_f) as file:
             self.settings = yaml.safe_load(file)
 
@@ -104,6 +104,7 @@ class AnalyseRun():
         baseline = 0.5
         duration = 1
         resp = str(self.resp_keys[0])[0]
+        print('Resp: ',resp)
 
         df = pd.read_table(glob.glob(fname)[0], keep_default_na=True)
         df = df.drop(

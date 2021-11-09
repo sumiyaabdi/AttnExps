@@ -19,6 +19,7 @@ def main():
     subject = sys.argv[1] # e.g. sub-001
     sess =  sys.argv[2] # e.g. 1
     run = sys.argv[3] # e.g. 0
+    file = 'train'
 
     task = ''
     while task not in ('2afc', 'yesno'):
@@ -32,7 +33,7 @@ def main():
     while eyetrack not in ('y','yes','n','no'):
         eyetrack = input('Eyetracking (y/n)?: ')
     
-    output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
+    output_str= subject+'/'+subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
     print(f'Output folder: {output_str}')
     
     output_dir = f'./logs/{subject}/{output_str}_Logs'
@@ -41,7 +42,7 @@ def main():
         print("Warning: output directory already exists. Renaming to avoid overwriting.")
         output_dir = output_dir + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    settings_file='expsettings/trainsettings_'+task+'.yml'
+    settings_file=f'expsettings/{file}settings_'+task+'.yml'
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
     
@@ -51,44 +52,44 @@ def main():
     elif attn == 'l' and task == 'yesno':
         print(f"\nColor Range: {settings['large_task']['color_range']}")
 
-    if len(sys.argv) < 5:
-        if task == 'yesno':
-            if (eyetrack == 'n') or (eyetrack == 'no'):
-                ts = PRFSession(output_str=output_str,
-                                output_dir=output_dir,
-                                settings_file=settings_file,
-                                eyetracker_on=False)
-            else:
-                ts = PRFSession(output_str=output_str,
-                                output_dir=output_dir,
-                                settings_file=settings_file)
-            ts.create_stimuli()
-            ts.create_trials()
-            ts.run()
+    # if len(sys.argv) < 5:
+    #     if task == 'yesno':
+    #         if (eyetrack == 'n') or (eyetrack == 'no'):
+    #             ts = PRFSession(output_str=output_str,
+    #                             output_dir=output_dir,
+    #                             settings_file=settings_file,
+    #                             eyetracker_on=False)
+    #         else:
+    #             ts = PRFSession(output_str=output_str,
+    #                             output_dir=output_dir,
+    #                             settings_file=settings_file)
+    #         ts.create_stimuli()
+    #         ts.create_trials()
+    #         ts.run()
 
-        elif task == '2afc':
-            if (eyetrack == 'n') or (eyetrack == 'no'):
-                ts = PsychophysSession(output_str=output_str,
-                                    output_dir=output_dir,
-                                    settings_file=settings_file,
-                                    eyetracker_on=False)
-            else:
-                ts = PsychophysSession(output_str=output_str,
-                                    output_dir=output_dir,
-                                    settings_file=settings_file)
-            ts.create_stimuli()
-            ts.create_trials()
-            ts.run()
+    #     elif task == '2afc':
+    #         if (eyetrack == 'n') or (eyetrack == 'no'):
+    #             ts = PsychophysSession(output_str=output_str,
+    #                                 output_dir=output_dir,
+    #                                 settings_file=settings_file,
+    #                                 eyetracker_on=False)
+    #         else:
+    #             ts = PsychophysSession(output_str=output_str,
+    #                                 output_dir=output_dir,
+    #                                 settings_file=settings_file)
+    #         ts.create_stimuli()
+    #         ts.create_trials()
+    #         ts.run()
 
-    return output_str, task, attn, subject
+    return output_str, task, attn, file
 
 
 if __name__ == '__main__':
-    output_str, task, attn,subject = main()
-    beh = AnalyseRun(f'{subject}/{output_str}', task, attn)
+    output_str, task, attn,file = main()
+    beh = AnalyseRun(output_str, task, attn,file)
 
     if task == '2afc':
         beh.analyse2afc()
         # beh.plot2afc()
     elif task == 'yesno':
-        beh.analyseYesNo(subject)
+        beh.analyseYesNo()
