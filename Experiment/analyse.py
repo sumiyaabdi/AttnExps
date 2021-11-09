@@ -18,12 +18,13 @@ Z = norm.ppf
 
 class AnalyseRun():
 
-    def __init__(self,folder,task,attn,set):
+    def __init__(self,folder,task,attn,subj,set):
         self.folder=folder
         self.task=task
         self.attn=attn
         self.wd = os.getcwd()
         self.set = set
+        self.subj = subj
 
         settings_f = opj(self.wd, f'expsettings/{set}settings_{self.task}.yml')
         print('Settings file: ',settings_f)
@@ -102,7 +103,8 @@ class AnalyseRun():
 
 
     def analyseYesNo(self):
-        fname = f'{self.wd}/logs/{self.folder}_Logs/*.tsv'
+        fname = f'{self.wd}/{self.subj}/logs/{self.folder}_Logs/*.tsv'
+        print('f  ',fname)
         cond = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5
         duration = 1
