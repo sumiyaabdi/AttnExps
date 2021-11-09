@@ -103,7 +103,7 @@ class AnalyseRun():
 
 
     def analyseYesNo(self):
-        fname = f'{self.wd}/{self.subj}/logs/{self.folder}_Logs/*.tsv'
+        fname = f'{self.wd}/logs/{self.subj}/{self.folder}_Logs/*.tsv'
         print('f  ',fname)
         cond = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5
