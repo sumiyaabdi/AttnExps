@@ -18,13 +18,15 @@ Z = norm.ppf
 
 class AnalyseRun():
 
-    def __init__(self,folder,task,attn):
+    def __init__(self,folder,task,attn,set):
         self.folder=folder
         self.task=task
         self.attn=attn
         self.wd = os.getcwd()
+        self.set = set
 
-        settings_f = opj(self.wd, f'expsettings/trainsettings_{self.task}.yml')
+        settings_f = opj(self.wd, f'expsettings/{set}settings_{self.task}.yml')
+        print('Settings file: ',settings_f)
         with open(settings_f) as file:
             self.settings = yaml.safe_load(file)
 
@@ -33,9 +35,10 @@ class AnalyseRun():
 
     def analyse2afc(self):
 
-        f = glob.glob(f"{self.wd}/logs/{self.folder}_Logs/*.tsv")[0]
-
         sub,ses,task,run = [i.split('-')[-1] for i in self.folder.split('_')]
+        f = glob.glob(f"{self.wd}/{sub}/logs/{self.folder}_Logs/*.tsv")[0]
+
+
         sz = task[-1]
         task=task[:-1]
         resp_blue, resp_pink = [str(i).lower() for i in self.resp_keys]
@@ -104,7 +107,6 @@ class AnalyseRun():
         baseline = 0.5
         duration = 1
         resp = str(self.resp_keys[0])[0]
-        print('Resp: ',resp)
 
         df = pd.read_table(glob.glob(fname)[0], keep_default_na=True)
         df = df.drop(

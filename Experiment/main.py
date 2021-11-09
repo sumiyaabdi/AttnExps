@@ -19,7 +19,7 @@ def main():
     subject = sys.argv[1] # e.g. sub-001
     sess =  sys.argv[2] # e.g. 1
     run = sys.argv[3] # e.g. 0
-    file = 'main'
+    name = 'main'
 
     task = ''
     while task not in ('2afc', 'yesno'):
@@ -42,7 +42,7 @@ def main():
         print("Warning: output directory already exists. Renaming to avoid overwriting.")
         output_dir = output_dir + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    settings_file=f'expsettings/{file}settings_'+task+'.yml'
+    settings_file=f'expsettings/{name}settings_'+task+'.yml'
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
     
@@ -81,12 +81,12 @@ def main():
             ts.create_trials()
             ts.run()
 
-    return output_str, task, attn, file
+    return output_str, task, attn, name
 
 
 if __name__ == '__main__':
-    output_str, task, attn, file = main()
-    beh = AnalyseRun(output_str, task, attn, file)
+    output_str, task, attn, name = main()
+    beh = AnalyseRun(output_str, task, attn, name)
 
     if task == '2afc':
         beh.analyse2afc()
