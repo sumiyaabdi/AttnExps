@@ -37,7 +37,7 @@ class AnalyseRun():
     def analyse2afc(self):
 
         sub,ses,task,run = [i.split('-')[-1] for i in self.folder.split('_')]
-        f = glob.glob(f"{self.wd}/{sub}/logs/{self.folder}_Logs/*.tsv")[0]
+        f = glob.glob(f"{self.wd}/logs/{self.subj}/{self.folder}_Logs/*.tsv")[0]
 
 
         sz = task[-1]
@@ -97,14 +97,13 @@ class AnalyseRun():
             axs[i].set_xlabel('% Blue')
             plt.legend(loc='best')          
 
-        fig2.savefig(f'./logs/{self.folder}_Logs/sigmoid.png',dpi=300)
+        fig2.savefig(f'./logs/{self.subj}/{self.folder}_Logs/sigmoid.png',dpi=300)
 
         plt.show()
 
 
     def analyseYesNo(self):
         fname = f'{self.wd}/logs/{self.subj}/{self.folder}_Logs/*.tsv'
-        print('f  ',fname)
         cond = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5
         duration = 1
