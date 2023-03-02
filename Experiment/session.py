@@ -28,7 +28,7 @@ class PRFSession(PylinkEyetrackerSession):
 
     def __init__(self, output_str, output_dir, settings_file, eyetracker_on=True):
 
-        super().__init__(output_str=output_str, output_dir=output_dir, settings_file=settings_file, eyetracker_on = eyetracker_on)
+        super().__init__(output_str=output_str, output_dir=output_dir, settings_file=settings_file, eyetracker_on=eyetracker_on)
 
         self.bar_orientations = np.array(self.settings['PRF stimulus settings']['Bar orientations'])
         self.start_blanks = int(self.settings['attn_task']['baseline_start']/self.settings['mri']['TR'] + 1)

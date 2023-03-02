@@ -17,7 +17,7 @@ monitor:
     name: default
     width: 69.8 # in cm, mac: 28.65
     distance: 210  # in cm, mac: 53.854
-    gamma: 1
+    gamma: 2.1
 
 mouse:
     visible: False

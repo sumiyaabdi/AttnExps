@@ -105,11 +105,10 @@ def d_prime(hits, misses, fas, crs):
 
     if fa_rate == 1:
         fa_rate = 1 - half_fa
-    elif fa_rate == 0:
+    elif fa_rate <= 0:
         fa_rate = half_fa
 
     d_prime = Z(hit_rate) - Z(fa_rate)
     c = -(Z(hit_rate) + Z(fa_rate)) / 2
-    #     print(f'Hit rate: \t {hit_rate} \nFalse Alarm rate: {fa_rate}')
 
     return d_prime, c

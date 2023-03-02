@@ -19,7 +19,7 @@ def main():
     subject = sys.argv[1] # e.g. sub-001
     sess =  sys.argv[2] # e.g. 1
     run = sys.argv[3] # e.g. 0
-    name = 'main'
+    name = 'exp'
 
     task = ''
     while task not in ('2afc', 'yesno'):
@@ -33,10 +33,10 @@ def main():
     while eyetrack not in ('y','yes','n','no'):
         eyetrack = input('Eyetracking (y/n)?: ')
     
-    output_str= subject+'/'+subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
+    output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
     print(f'Output folder: {output_str}')
     
-    output_dir = './logs/'+subject+'/'+output_str+'_Logs'
+    output_dir = f'./logs/{subject}/{output_str}_Logs'#'./logs/'+subject+'/'+output_str+'_Logs'
     
     if os.path.exists(output_dir):
         print("Warning: output directory already exists. Renaming to avoid overwriting.")
@@ -81,12 +81,12 @@ def main():
             ts.create_trials()
             ts.run()
 
-    return output_str, task, attn, name
+    return output_str, task, attn, subject, name
 
 
 if __name__ == '__main__':
-    output_str, task, attn, name = main()
-    beh = AnalyseRun(output_str, task, attn, name)
+    output_str, task, attn, subject, name = main()
+    beh = AnalyseRun(output_str, task, attn, subject, name)
 
     if task == '2afc':
         beh.analyse2afc()

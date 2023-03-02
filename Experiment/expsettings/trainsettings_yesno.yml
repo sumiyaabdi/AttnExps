@@ -17,7 +17,7 @@ monitor:
     name: default
     width: 69.8 # in cm, mac: 28.65
     distance: 210  # in cm, mac: 53.854
-    gamma: 1
+    gamma: 2.1
 
 mouse:
     visible: False
@@ -47,10 +47,11 @@ psychophysics:
 attn_task:
   stim_per_trial: 2
   signal: 12
-  baseline_start: 20 #seconds
-  baseline_end: 30 #seconds
+  baseline_start: 5 #seconds
+  baseline_end: 5 #seconds
   resp_keys: [1.0, 2.0] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
   interp_values: [0.1,0.9]
+  resp_time: 1
 
 large_task:
     n_sections: 1
@@ -60,7 +61,7 @@ large_task:
     color1: [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.05,0.95]
+    color_range: [0.8,0.2]
     jitter: 0.15
     padding: 0 # degrees
 
@@ -73,7 +74,7 @@ small_task:
     color1:  [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.1 , 0.9]
+    color_range: [0.35, 0.65]
 
 fixation stim:
   line_color: black

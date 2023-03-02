@@ -10,20 +10,29 @@ window:
     fullscr: True
     winType: pyglet
     waitBlanking: True
+    screen: 1
 
 operating system: linux
 
 monitor:
     name: default
     width: 69.8 # in cm, mac:28.65 #
-    distance:  210  # in cm, mac:53.854 #
-    gamma: 1
+    distance: 196  # in cm, mac:53.854 #
+    gamma: 2.06
 
 mouse:
     visible: False
 
 eyetracker:
     model: eyelink
+    address: '100.1.1.1'
+    dot_size: 0.1
+    options:
+        active_eye: left
+        calibration_type: HV5
+        sample_rate: 1000
+        calibration_area_proportion: 0.4 0.4
+        validation_area_proportion: 0.4 0.4
 
 mri:
     TR: 1.5  # seconds between volume acquisitions
@@ -51,6 +60,7 @@ attn_task:
   baseline_end: 30 #seconds
   resp_keys: ['b', 'y']
   interp_values: [0.15,0.85]
+  resp_time: 1
 
 large_task:
     n_sections: 1
@@ -60,7 +70,7 @@ large_task:
     color1: [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.716 , 0.284]
+    color_range: [0.275, 0.725]
     jitter: 0.15
     padding: 0 # degrees
 
@@ -73,7 +83,7 @@ small_task:
     color1:  [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.618 , 0.382]
+    color_range: [0.625, 0.375]
     jitter: None
 
 fixation stim:
