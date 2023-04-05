@@ -141,7 +141,7 @@ class AnalyseRun():
             print(f'\nAttention {self.attn.upper()}\nProportions: {prop_values}\nResponse Keys: {df.response.unique()}\n')
 
         for sz in ['small_prop', 'large_prop']:
-            prop_values=[]
+            # prop_values=[]
             switch_loc = np.diff(stim_df[sz], prepend=baseline) != 0
             switch_loc = stim_df[(switch_loc) & (stim_df[sz] != baseline) & (stim_df[sz].notna())].index  # drop values where color_balance is 0.5
             
@@ -159,6 +159,7 @@ class AnalyseRun():
             rts = [r for r in rts if r < 2]            
 
             if sz[0] == self.attn:
+                self.prop=prop_values
                 self.fname = glob.glob(fname)[0]
                 self.d = d
                 self.c = c

@@ -7,3 +7,5 @@ logs/
 #macbook stuff
 .DS_Store
 
+#hidden files
+Experiment/.*

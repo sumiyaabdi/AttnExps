@@ -23,7 +23,7 @@ mouse:
     visible: False
 
 eyetracker:
-    model: eyelink
+    model: eyelinkyesno
 
 mri:
     TR: 1.5  # seconds between volume acquisitions
