@@ -105,8 +105,9 @@ class AnalyseRun():
         plt.show()
 
 
-    def analyseYesNo(self,resp=None):
-        fname = f'{self.wd}/logs/{self.subj}/{self.folder}_Logs/{self.folder}_events.tsv'
+    def analyseYesNo(self,resp=None,fname=None):
+        if not fname:
+            fname = f'{self.wd}/logs/{self.subj}/{self.folder}_Logs/{self.folder}_events.tsv'
         cond = 'large_prop' if self.attn == 'l' else 'small_prop'
         baseline = 0.5
         duration = self.settings['attn_task']['resp_time']
