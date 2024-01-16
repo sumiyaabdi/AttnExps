@@ -25,9 +25,7 @@ def main():
     while task not in ('2afc', 'yesno'):
         task = input("Which attention task ['2afc' / 'yesno']?: ")
 
-    attn = ''
-    while attn not in ('s','l'):
-        attn = input('Which attention size [small (s) / large (l)]?: ')
+    attn = 's'
 
     eyetrack = ''
     while eyetrack not in ('y','yes','n','no'):

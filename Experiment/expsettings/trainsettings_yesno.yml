@@ -93,4 +93,4 @@ PRF stimulus settings:
     Checkers motion speed: 3          # checkers motion speed. direction is randomly up/down at each bar step
     Size fixation dot in degrees: 0.05 # dot changes color on average every two TRs (or bar steps)
     Bar step length: 1.5                # in seconds. this is only used if Scanner sync is set to False
-    contrast: 0.5
+    contrast: 0.1
