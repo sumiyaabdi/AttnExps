@@ -21,10 +21,7 @@ def main():
     run = sys.argv[3] # e.g. 0
     name = 'train'
 
-    task = ''
-    while task not in ('2afc', 'yesno'):
-        task = input("Which attention task ['2afc' / 'yesno']?: ")
-
+    task = 'yesno'
     attn = 's'
 
     eyetrack = ''

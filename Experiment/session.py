@@ -82,7 +82,7 @@ class PRFSession(PylinkEyetrackerSession):
                         squares_in_bar=self.settings['PRF stimulus settings']['Squares in bar'], 
                         bar_width_deg=self.settings['PRF stimulus settings']['Bar width in degrees'],
                         flicker_frequency=self.settings['PRF stimulus settings']['Checkers motion speed'],
-                        contrast=self.settings['PRF stimulus settings']['contrast'])
+                        contrast=1) #contrast is a placeholder as it is set per trial
 
         if self.settings['operating system'] == 'mac':
             mask_size = [self.win.size[0]/2,self.win.size[1]/2]
@@ -165,8 +165,9 @@ class PRFSession(PylinkEyetrackerSession):
         blanks_array=self.settings['PRF stimulus settings']['Blanks length']*np.ones(len(self.bar_orientations))
         repeat_times=np.where(self.bar_orientations == -1, blanks_array, steps_array).astype(int)
         self.bar_orientation_at_TR = np.concatenate((-1*np.ones(5), np.repeat(self.bar_orientations, repeat_times)))
-        bar_pos_array = self.screen[1]*np.linspace(-0.5,0.5, self.settings['PRF stimulus settings']['Bar pass steps'])
+        bar_pos_array = np.asarray([0]*self.settings['PRF stimulus settings']['Bar pass steps']) #self.screen[1]*np.linspace(-0.5,0.5, self.settings['PRF stimulus settings']['Bar pass steps'])
         blank_array = np.zeros(self.settings['PRF stimulus settings']['Blanks length'])
+        self.bar_contrast_at_TR = np.concatenate((-1*np.ones(5), np.repeat(self.settings['PRF stimulus settings']['Bar contrasts'], repeat_times)))
         
         #the 5 empty trials at beginning
         self.bar_pos_in_ori=np.zeros(5)
@@ -188,7 +189,8 @@ class PRFSession(PylinkEyetrackerSession):
                                                     trial_nr=i,
                                                     bar_orientation=self.bar_orientation_at_TR[i],
                                                     bar_position_in_ori=self.bar_pos_in_ori[i],
-                                                    bar_direction=self.bar_direction_at_TR[i]
+                                                    bar_direction=self.bar_direction_at_TR[i],
+                                                    bar_contrast=self.bar_contrast_at_TR[i]
                                                     ))
             else:
                 if i < self.start_blanks:
@@ -201,7 +203,8 @@ class PRFSession(PylinkEyetrackerSession):
                                             trial_nr=i,
                                             bar_orientation=self.bar_orientation_at_TR[i-self.start_blanks],
                                             bar_position_in_ori=self.bar_pos_in_ori[i-self.start_blanks],
-                                            bar_direction=self.bar_direction_at_TR[i-self.start_blanks]
+                                            bar_direction=self.bar_direction_at_TR[i-self.start_blanks],
+                                            bar_contrast=self.bar_contrast_at_TR[i-self.start_blanks]
                                             ))
                 else:
                     self.trials.append(BaselineTrial(session=self,
@@ -224,7 +227,8 @@ class PRFSession(PylinkEyetrackerSession):
             self.prf_stim.draw(time=prf_time,
                                pos_in_ori=self.current_trial.bar_position_in_ori,
                                orientation=self.current_trial.bar_orientation,
-                               bar_direction=self.current_trial.bar_direction)
+                               bar_direction=self.current_trial.bar_direction,
+                               contrast=self.current_trial.contrast)
 
     def draw_attn_stimulus(self, phase):
         self.stim_nr = get_stim_nr(self.current_trial.trial_nr,phase,self.stim_per_trial)

@@ -85,12 +85,13 @@ class BaselineTrial(Trial):
 class PRFTrial(Trial):
 
     def __init__(self, session, trial_nr, bar_orientation, bar_position_in_ori,
-                 bar_direction, *args, **kwargs):
+                 bar_direction, bar_contrast, *args, **kwargs):
 
         #trial number and bar parameters   
         self.bar_orientation = bar_orientation
         self.bar_position_in_ori = bar_position_in_ori
         self.bar_direction = bar_direction
+        self.contrast = bar_contrast
         self.session = session
         self.trial_nr = trial_nr
 

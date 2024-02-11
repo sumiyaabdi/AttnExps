@@ -21,15 +21,12 @@ def main():
     run = sys.argv[3] # e.g. 0
     name = 'exp'
 
-    task = ''
-    while task not in ('2afc', 'yesno'):
-        task = input("Which attention task ['2afc' / 'yesno']?: ")
-
+    task = 'yesno'
     attn = 's'
 
-    eyetrack = ''
-    while eyetrack not in ('y','yes','n','no'):
-        eyetrack = input('Eyetracking (y/n)?: ')
+    eyetrack = 'n'
+    # while eyetrack not in ('y','yes','n','no'):
+    #     eyetrack = input('Eyetracking (y/n)?: ')
     
     output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
     print(f'Output folder: {output_str}')

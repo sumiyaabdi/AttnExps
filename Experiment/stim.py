@@ -272,7 +272,7 @@ class PRFStim(object):
 
         
     # this is the function that actually draws the stimulus. the sequence of different textures gives the illusion of motion.
-    def draw(self, time, pos_in_ori, orientation,  bar_direction):
+    def draw(self, time, pos_in_ori, orientation,  bar_direction, contrast):
         
         # calculate position of the bar in relation to its orientation
         x_pos, y_pos = np.cos((2.0*np.pi)*-orientation/360.0)*pos_in_ori, np.sin((2.0*np.pi)*-orientation/360.0)*pos_in_ori
@@ -286,65 +286,81 @@ class PRFStim(object):
             if sin > 0 and cos > 0 and cos > sin:
                 self.checkerboard_1.setPos([x_pos, y_pos])
                 self.checkerboard_1.setOri(orientation)
+                self.checkerboard_1.setContrast(contrast)
                 self.checkerboard_1.draw()
             elif sin > 0 and cos > 0 and cos < sin:
                 self.checkerboard_2.setPos([x_pos, y_pos])
                 self.checkerboard_2.setOri(orientation)
+                self.checkerboard_2.setContrast(contrast)
                 self.checkerboard_2.draw()
             elif sin > 0 and cos < 0 and np.abs(cos) < sin:
                 self.checkerboard_3.setPos([x_pos, y_pos])
                 self.checkerboard_3.setOri(orientation)
+                self.checkerboard_3.setContrast(contrast)
                 self.checkerboard_3.draw()
             elif sin > 0 and cos < 0 and np.abs(cos) > sin:
                 self.checkerboard_4.setPos([x_pos, y_pos])
                 self.checkerboard_4.setOri(orientation)
+                self.checkerboard_4.setContrast(contrast)
                 self.checkerboard_4.draw()
             elif sin < 0 and cos < 0 and cos < sin:
                 self.checkerboard_5.setPos([x_pos, y_pos])
                 self.checkerboard_5.setOri(orientation)
+                self.checkerboard_5.setContrast(contrast)
                 self.checkerboard_5.draw()
             elif sin < 0 and cos < 0 and cos > sin:
                 self.checkerboard_6.setPos([x_pos, y_pos])
                 self.checkerboard_6.setOri(orientation)
+                self.checkerboard_6.setContrast(contrast)
                 self.checkerboard_6.draw()
             elif sin < 0 and cos > 0 and cos < np.abs(sin):
                 self.checkerboard_7.setPos([x_pos, y_pos])
                 self.checkerboard_7.setOri(orientation)
+                self.checkerboard_7.setContrast(contrast)
                 self.checkerboard_7.draw()
             else:
                 self.checkerboard_8.setPos([x_pos, y_pos])
                 self.checkerboard_8.setOri(orientation)
+                self.checkerboard_8.setContrast(contrast)
                 self.checkerboard_8.draw()
         else:
             if sin > 0 and cos > 0 and cos > sin:
                 self.checkerboard_8.setPos([x_pos, y_pos])
                 self.checkerboard_8.setOri(orientation)
+                self.checkerboard_8.setContrast(contrast)
                 self.checkerboard_8.draw()
             elif sin > 0 and cos > 0 and cos < sin:
                 self.checkerboard_7.setPos([x_pos, y_pos])
                 self.checkerboard_7.setOri(orientation)
+                self.checkerboard_7.setContrast(contrast)
                 self.checkerboard_7.draw()
             elif sin > 0 and cos < 0 and np.abs(cos) < sin:
                 self.checkerboard_6.setPos([x_pos, y_pos])
                 self.checkerboard_6.setOri(orientation)
+                self.checkerboard_6.setContrast(contrast)
                 self.checkerboard_6.draw()
             elif sin > 0 and cos < 0 and np.abs(cos) > sin:
                 self.checkerboard_5.setPos([x_pos, y_pos])
                 self.checkerboard_5.setOri(orientation)
+                self.checkerboard_5.setContrast(contrast)
                 self.checkerboard_5.draw()
             elif sin < 0 and cos < 0 and cos < sin:
                 self.checkerboard_4.setPos([x_pos, y_pos])
                 self.checkerboard_4.setOri(orientation)
+                self.checkerboard_4.setContrast(contrast)
                 self.checkerboard_4.draw()
             elif sin < 0 and cos < 0 and cos > sin:
                 self.checkerboard_3.setPos([x_pos, y_pos])
                 self.checkerboard_3.setOri(orientation)
+                self.checkerboard_3.setContrast(contrast)
                 self.checkerboard_3.draw()
             elif sin < 0 and cos > 0 and cos < np.abs(sin):
                 self.checkerboard_2.setPos([x_pos, y_pos])
                 self.checkerboard_2.setOri(orientation)
+                self.checkerboard_2.setContrast(contrast)
                 self.checkerboard_2.draw()
             else:
                 self.checkerboard_1.setPos([x_pos, y_pos])
                 self.checkerboard_1.setOri(orientation)
+                self.checkerboard_1.setContrast(contrast)
                 self.checkerboard_1.draw()            
