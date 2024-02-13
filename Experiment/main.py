@@ -25,8 +25,8 @@ def main():
     attn = 's'
 
     eyetrack = 'n'
-    # while eyetrack not in ('y','yes','n','no'):
-    #     eyetrack = input('Eyetracking (y/n)?: ')
+    while eyetrack not in ('y','yes','n','no'):
+        eyetrack = input('Eyetracking (y/n)?: ')
     
     output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
     print(f'Output folder: {output_str}')
