@@ -28,7 +28,7 @@ class AnalyseRun():
         self.subj = subj
         self.verbose=verbose
 
-        settings_f = opj(self.wd, f'expsettings/{set}settings_{self.task}.yml')
+        settings_f = opj(self.wd, f'expsettings/{set}settings_yesno.yml')
         if verbose:
             print('Settings file: ',settings_f)
         with open(settings_f) as file:

@@ -20,20 +20,21 @@ def main():
     sess =  sys.argv[2] # e.g. 1
     run = sys.argv[3] # e.g. 0
     name = 'exp'
+    task = 'yesno'
+    
+    contrast=''
+    while contrast not in ('low', 'high','l','h'):
+        contrast = input("Which bar contrast ['l' / 'h']?: ")
 
-    task = ''
-    while task not in ('2afc', 'yesno'):
-        task = input("Which attention task ['2afc' / 'yesno']?: ")
-
-    attn = ''
-    while attn not in ('s','l'):
-        attn = input('Which attention size [small (s) / large (l)]?: ')
+    attn = 's'
+    # while attn not in ('s','l'):
+    #     attn = input('Which attention size [small (s) / large (l)]?: ')
 
     eyetrack = ''
     while eyetrack not in ('y','yes','n','no'):
         eyetrack = input('Eyetracking (y/n)?: ')
     
-    output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
+    output_str= subject+'_ses-'+sess+'_task-'+contrast[0]+'_run-'+run
     print(f'Output folder: {output_str}')
     
     output_dir = f'./logs/{subject}/{output_str}_Logs'#'./logs/'+subject+'/'+output_str+'_Logs'
@@ -42,10 +43,10 @@ def main():
         print("Warning: output directory already exists. Renaming to avoid overwriting.")
         output_dir = output_dir + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    settings_file=f'expsettings/{name}settings_'+task+'.yml'
+    settings_file=f'expsettings/{name}settings_yesno{contrast[0].upper()}.yml'
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
-    
+
     # print color range for task
     if attn == 's' and task == 'yesno':
         print(f"\nColor Range: {settings['small_task']['color_range']}")
