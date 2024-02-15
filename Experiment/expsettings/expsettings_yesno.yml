@@ -10,7 +10,6 @@ window:
     fullscr: True
     winType: pyglet
     waitBlanking: True
-    screen: 1
 
 operating system: linux
 
@@ -98,9 +97,9 @@ PRF stimulus settings:
     Squares in bar: 2
     Bar pass steps: 20                # number of steps the bar takes to traverse the aperture
     Blanks length: 10                  # length of interbar periods (-1 in orientation). like bar pass steps, in units of TRs or bar step length
-    Bar orientations: [-1, 0,  225, -1, 90, 315, -1,  180, 45, -1,  270, 135,  -1, -1]
+    Bar orientations: [-1, 315,  225, -1, 135, 45, -1,  -1] #[-1, 0,  225, -1, 90, 315, -1,  180, 45, -1,  270, 135,  -1, -1]
     Bar width in degrees: 1.25
     Checkers motion speed: 3          # checkers motion speed. direction is randomly up/down at each bar step
     Size fixation dot in degrees: 0.05 # dot changes color on average every two TRs (or bar steps)
     Bar step length: 1.5            # in seconds. this is only used if Scanner sync is set to False
-    contrast: 0.5
+    contrast: 0.5 # 0.8, 0.1

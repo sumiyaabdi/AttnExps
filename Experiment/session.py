@@ -229,7 +229,7 @@ class PRFSession(PylinkEyetrackerSession):
     def draw_attn_stimulus(self, phase):
         self.stim_nr = get_stim_nr(self.current_trial.trial_nr,phase,self.stim_per_trial)
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
-        self.largeAF.draw(self.large_balances[self.stim_nr], self.stim_nr)
+        # self.largeAF.draw(self.large_balances[self.stim_nr], self.stim_nr)
         self.smallAF.draw(self.small_balances[self.stim_nr], self.stim_nr)
 
 
