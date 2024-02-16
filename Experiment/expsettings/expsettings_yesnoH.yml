@@ -16,7 +16,7 @@ operating system: linux
 monitor:
     name: default
     width: 69.8 # in cm, mac:28.65 #
-    distance: 196  # in cm, mac:53.854 #
+    distance: 210  # in cm, mac:53.854 #
     gamma: 2.06
 
 mouse:
@@ -37,7 +37,6 @@ mri:
     TR: 1.5  # seconds between volume acquisitions
     topup_scan: True
     topup_duration: 45 # topup scan duration in seconds (no 't's)
-
     #only relevant for scanning simulations
     simulate: False #set this to true to simulate a virtual scanner
     TA: 1.5  # seconds to acquire one volume

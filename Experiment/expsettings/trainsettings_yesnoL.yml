@@ -29,11 +29,10 @@ mri:
     TR: 1.5  # seconds between volume acquisitions
     topup_scan: False
     topup_duration: 45 # topup scan duration in seconds (no 't's)
-
     #only relevant for scanning simulations
     simulate: True #set this to true to simulate a virtual scanner   
     TA: 1.5  # seconds to acquire one volume
-    volumes: 224  # number of 3D volumes to obtain in a given scanning run
+    volumes: 159  # number of 3D volumes to obtain in a given scanning run
     sync: t  # character used as flag for simulation sync timing, default=‘5’
     skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
     sound: False  # simulate scanner noise

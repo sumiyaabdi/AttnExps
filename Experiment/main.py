@@ -82,12 +82,12 @@ def main():
             ts.create_trials()
             ts.run()
 
-    return output_str, task, attn, subject, name
+    return output_str, task, contrast, subject, name
 
 
 if __name__ == '__main__':
-    output_str, task, attn, subject, name = main()
-    beh = AnalyseRun(output_str, task, attn, subject, name)
+    output_str, task, contrast, subject, name = main()
+    beh = AnalyseRun(output_str, task, contrast, subject, name)
 
     if task == '2afc':
         beh.analyse2afc()

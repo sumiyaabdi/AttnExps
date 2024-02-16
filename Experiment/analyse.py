@@ -22,13 +22,13 @@ class AnalyseRun():
     def __init__(self,folder,task,attn,subj,set,wd=None,verbose=True):
         self.folder=folder
         self.task=task
-        self.attn=attn
+        self.attn=attn #contrast
         self.wd = wd if wd else os.getcwd() 
         self.set = set
         self.subj = subj
         self.verbose=verbose
 
-        settings_f = opj(self.wd, f'expsettings/{set}settings_yesno.yml')
+        settings_f = opj(self.wd, f'expsettings/{set}settings_yesno{attn.upper()}.yml')
         if verbose:
             print('Settings file: ',settings_f)
         with open(settings_f) as file:
