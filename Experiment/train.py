@@ -34,7 +34,7 @@ def main():
     while eyetrack not in ('y','yes','n','no'):
         eyetrack = input('Eyetracking (y/n)?: ')
     
-    output_str= subject+'_ses-'+sess+'_task-'+contrast[0]+'_run-'+run
+    output_str= subject+'_ses-'+sess+'_task-contrast'+contrast[0].upper()+'_run-'+run
     print(f'Output folder: {output_str}')
     
     output_dir = f'./logs/{subject}/{output_str}_Logs'
@@ -53,34 +53,34 @@ def main():
     elif attn == 'l' and task == 'yesno':
         print(f"\nColor Range: {settings['large_task']['color_range']}")
 
-    # if len(sys.argv) < 5:
-    #     if task == 'yesno':
-    #         if (eyetrack == 'n') or (eyetrack == 'no'):
-    #             ts = PRFSession(output_str=output_str,
-    #                             output_dir=output_dir,
-    #                             settings_file=settings_file,
-    #                             eyetracker_on=False)
-    #         else:
-    #             ts = PRFSession(output_str=output_str,
-    #                             output_dir=output_dir,
-    #                             settings_file=settings_file)
-    #         ts.create_stimuli()
-    #         ts.create_trials()
-    #         ts.run()
+    if len(sys.argv) < 5:
+        if task == 'yesno':
+            if (eyetrack == 'n') or (eyetrack == 'no'):
+                ts = PRFSession(output_str=output_str,
+                                output_dir=output_dir,
+                                settings_file=settings_file,
+                                eyetracker_on=False)
+            else:
+                ts = PRFSession(output_str=output_str,
+                                output_dir=output_dir,
+                                settings_file=settings_file)
+            ts.create_stimuli()
+            ts.create_trials()
+            ts.run()
 
-    #     elif task == '2afc':
-    #         if (eyetrack == 'n') or (eyetrack == 'no'):
-    #             ts = PsychophysSession(output_str=output_str,
-    #                                 output_dir=output_dir,
-    #                                 settings_file=settings_file,
-    #                                 eyetracker_on=False)
-    #         else:
-    #             ts = PsychophysSession(output_str=output_str,
-    #                                 output_dir=output_dir,
-    #                                 settings_file=settings_file)
-    #         ts.create_stimuli()
-    #         ts.create_trials()
-    #         ts.run()
+        elif task == '2afc':
+            if (eyetrack == 'n') or (eyetrack == 'no'):
+                ts = PsychophysSession(output_str=output_str,
+                                    output_dir=output_dir,
+                                    settings_file=settings_file,
+                                    eyetracker_on=False)
+            else:
+                ts = PsychophysSession(output_str=output_str,
+                                    output_dir=output_dir,
+                                    settings_file=settings_file)
+            ts.create_stimuli()
+            ts.create_trials()
+            ts.run()
 
     return output_str, task, contrast, subject,name
 

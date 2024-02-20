@@ -34,7 +34,7 @@ def main():
     while eyetrack not in ('y','yes','n','no'):
         eyetrack = input('Eyetracking (y/n)?: ')
     
-    output_str= subject+'_ses-'+sess+'_task-'+contrast[0]+'_run-'+run
+    output_str= subject+'_ses-'+sess+'_task-contrast'+contrast[0].upper()+'_run-'+run
     print(f'Output folder: {output_str}')
     
     output_dir = f'./logs/{subject}/{output_str}_Logs'#'./logs/'+subject+'/'+output_str+'_Logs'

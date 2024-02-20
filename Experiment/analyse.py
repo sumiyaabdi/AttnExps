@@ -141,7 +141,7 @@ class AnalyseRun():
         if self.verbose:
             print(f'\nAttention {self.attn.upper()}\nProportions: {prop_values}\nResponse Keys: {df.response.unique()}\n')
 
-        for sz in ['small_prop', 'large_prop']:
+        for sz in ['small_prop']:
             # prop_values=[]
             switch_loc = np.diff(stim_df[sz], prepend=baseline) != 0
             switch_loc = stim_df[(switch_loc) & (stim_df[sz] != baseline) & (stim_df[sz].notna())].index  # drop values where color_balance is 0.5
@@ -159,27 +159,26 @@ class AnalyseRun():
             rts = [min(abs(responses.onset - i)) for i in df.loc[switch_loc].onset]
             rts = [r for r in rts if r < 2]            
 
-            if sz[0] == self.attn:
-                self.prop=prop_values
-                self.fname = glob.glob(fname)[0]
-                self.d = d
-                self.c = c
-                self.tp = tp
-                self.fn = fn
-                self.fp = fp
-                self.tn = tn
-                self.switch_loc = switch_loc
-                self.responses = responses
-                self.df = df
-                self.rt = np.mean(rts)
+            # if sz[0] == self.attn:
+            self.prop=prop_values
+            self.fname = glob.glob(fname)[0]
+            self.d = d
+            self.c = c
+            self.tp = tp
+            self.fn = fn
+            self.fp = fp
+            self.tn = tn
+            self.switch_loc = switch_loc
+            self.responses = responses
+            self.df = df
+            self.rt = np.mean(rts)
 
             if self.verbose:
                 print(f"{sz.split('_')[0]} D': {d:.3f}, C: {c:.3f}\n")
                 
-                if sz[0] == self.attn:
-                    print(f"{len(self.switch_loc)} expected responses\
-                          \n{len(self.responses)} actual subject responses\
-                          \n{self.tp} hits (within {self.settings['attn_task']['resp_time']}s)\
-                          \n{self.fn} misses\
-                          \n{self.fp} false alarms\
-                          \nAverage RT: {self.rt:.3f}s\n")
+                print(f"{len(self.switch_loc)} expected responses\
+                        \n{len(self.responses)} actual subject responses\
+                        \n{self.tp} hits (within {self.settings['attn_task']['resp_time']}s)\
+                        \n{self.fn} misses\
+                        \n{self.fp} false alarms\
+                        \nAverage RT: {self.rt:.3f}s\n")
