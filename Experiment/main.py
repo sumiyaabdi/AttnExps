@@ -11,8 +11,6 @@ from session import PRFSession, PsychophysSession
 from analyse import *
 from datetime import datetime
 
-
-
 datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 def main():
