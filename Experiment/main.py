@@ -28,9 +28,9 @@ def main():
     # while attn not in ('s','l'):
     #     attn = input('Which attention size [small (s) / large (l)]?: ')
 
-    eyetrack = ''
-    while eyetrack not in ('y','yes','n','no'):
-        eyetrack = input('Eyetracking (y/n)?: ')
+    eyetrack = 'y'
+    # while eyetrack not in ('y','yes','n','no'):
+    #     eyetrack = input('Eyetracking (y/n)?: ')
     
     output_str= subject+'_ses-'+sess+'_task-contrast'+contrast[0].upper()+'_run-'+run
     print(f'Output folder: {output_str}')
