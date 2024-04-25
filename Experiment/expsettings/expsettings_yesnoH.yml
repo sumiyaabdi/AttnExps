@@ -68,7 +68,7 @@ large_task:
     color1: [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.375, 0.625]
+    color_range: [0.35, 0.65]
     jitter: 0.15
     padding: 0 # degrees
 
@@ -81,7 +81,7 @@ small_task:
     color1:  [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.37, 0.63]
+    color_range: [0.35, 0.65]
     jitter: None
 
 fixation stim:
