@@ -17,43 +17,40 @@ monitor:
     name: default
     width: 69.8 # in cm, mac: 28.65
     distance: 210  # in cm, mac: 53.854
-    gamma: 1
+    gamma: 2.1
 
 mouse:
     visible: False
 
 eyetracker:
-    model: eyelink
+    model: eyelinkyesno
 
 mri:
     TR: 1.5  # seconds between volume acquisitions
     topup_scan: False
     topup_duration: 45 # topup scan duration in seconds (no 't's)
     #only relevant for scanning simulations
-    simulate: False #set this to true to simulate a virtual scanner   
+    simulate: True #set this to true to simulate a virtual scanner   
     TA: 1.5  # seconds to acquire one volume
-<<<<<<<< HEAD:contrastMap/Experiment/expsettings/expsettings_2afc.yml
-    volumes: 100  # number of 3D volumes to obtain in a given scanning run
-========
     volumes: 159  # number of 3D volumes to obtain in a given scanning run
->>>>>>>> pRFcontr:pRF_contrast/Experiment/expsettings/trainsettings_yesnoH.yml
     sync: t  # character used as flag for simulation sync timing, default=‘5’
     skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
     sound: False  # simulate scanner noise
 
 psychophysics:
-    task: True
+    task: False
     bar: False
     large_range: [0.1, 0.15, 0.2, 0.3, 0.4 ,0.5, 0.6, 0.7, 0.8, 0.85,0.9]
     small_range: [0.1, 0.15, 0.2, 0.3, 0.4 ,0.5, 0.6, 0.7, 0.8, 0.85,0.9]
 
 attn_task:
   stim_per_trial: 2
-  signal: 6
-  baseline_start: 20 #seconds
-  baseline_end: 30 #seconds
+  signal: 12
+  baseline_start: 5 #seconds
+  baseline_end: 5 #seconds
   resp_keys: [1.0, 2.0] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
-  interp_values: [0.15,0.85]
+  interp_values: [0.1,0.9]
+  resp_time: 1
 
 large_task:
     n_sections: 1
@@ -63,7 +60,7 @@ large_task:
     color1: [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.1,0.9]
+    color_range: [0.8,0.2]
     jitter: 0.15
     padding: 0 # degrees
 
@@ -76,7 +73,7 @@ small_task:
     color1:  [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.1,0.9]
+    color_range: [0.35, 0.65]
 
 fixation stim:
   line_color: black
@@ -95,4 +92,4 @@ PRF stimulus settings:
     Checkers motion speed: 3          # checkers motion speed. direction is randomly up/down at each bar step
     Size fixation dot in degrees: 0.05 # dot changes color on average every two TRs (or bar steps)
     Bar step length: 1.5                # in seconds. this is only used if Scanner sync is set to False
-    contrast: 0.8
+    contrast: 0.1

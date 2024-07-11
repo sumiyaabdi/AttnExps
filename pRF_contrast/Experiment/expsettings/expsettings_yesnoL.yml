@@ -15,45 +15,51 @@ operating system: linux
 
 monitor:
     name: default
-    width: 69.8 # in cm, mac: 28.65
-    distance: 210  # in cm, mac: 53.854
-    gamma: 1
+    width: 69.8 # in cm, mac:28.65 #
+    distance: 196  # in cm, mac:53.854 #
+    gamma: 2.06
 
 mouse:
     visible: False
 
 eyetracker:
     model: eyelink
+    address: '100.1.1.1'
+    dot_size: 0.1
+    options:
+        active_eye: left
+        calibration_type: HV5
+        sample_rate: 1000
+        calibration_area_proportion: 0.4 0.4
+        validation_area_proportion: 0.4 0.4
 
 mri:
     TR: 1.5  # seconds between volume acquisitions
-    topup_scan: False
+    topup_scan: True
     topup_duration: 45 # topup scan duration in seconds (no 't's)
+
     #only relevant for scanning simulations
-    simulate: False #set this to true to simulate a virtual scanner   
+    simulate: False #set this to true to simulate a virtual scanner
     TA: 1.5  # seconds to acquire one volume
-<<<<<<<< HEAD:contrastMap/Experiment/expsettings/expsettings_2afc.yml
-    volumes: 100  # number of 3D volumes to obtain in a given scanning run
-========
-    volumes: 159  # number of 3D volumes to obtain in a given scanning run
->>>>>>>> pRFcontr:pRF_contrast/Experiment/expsettings/trainsettings_yesnoH.yml
+    volumes: 260  # number of 3D volumes to obtain in a given scanning run
     sync: t  # character used as flag for simulation sync timing, default=‘5’
     skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
     sound: False  # simulate scanner noise
 
 psychophysics:
-    task: True
-    bar: False
+    task: False
+    bar: True
     large_range: [0.1, 0.15, 0.2, 0.3, 0.4 ,0.5, 0.6, 0.7, 0.8, 0.85,0.9]
     small_range: [0.1, 0.15, 0.2, 0.3, 0.4 ,0.5, 0.6, 0.7, 0.8, 0.85,0.9]
 
 attn_task:
   stim_per_trial: 2
-  signal: 6
+  signal: 12
   baseline_start: 20 #seconds
   baseline_end: 30 #seconds
-  resp_keys: [1.0, 2.0] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
+  resp_keys: ['b', 'y']
   interp_values: [0.15,0.85]
+  resp_time: 1
 
 large_task:
     n_sections: 1
@@ -63,7 +69,7 @@ large_task:
     color1: [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.1,0.9]
+    color_range: [0.34, 0.66]
     jitter: 0.15
     padding: 0 # degrees
 
@@ -76,7 +82,8 @@ small_task:
     color1:  [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
     color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
     default_balance: 0.5
-    color_range: [0.1,0.9]
+    color_range: [0.33, 0.67]
+    jitter: None
 
 fixation stim:
   line_color: black
@@ -85,7 +92,7 @@ fixation stim:
   default_color: 0
 
 PRF stimulus settings:
-    Scanner sync: False                # set this to true to make bar move on input 't'
+    Scanner sync: True                # set this to true to make bar move on input 't'
     Screenshot: True
     Squares in bar: 2
     Bar pass steps: 20                # number of steps the bar takes to traverse the aperture
@@ -94,5 +101,5 @@ PRF stimulus settings:
     Bar width in degrees: 1.25
     Checkers motion speed: 3          # checkers motion speed. direction is randomly up/down at each bar step
     Size fixation dot in degrees: 0.05 # dot changes color on average every two TRs (or bar steps)
-    Bar step length: 1.5                # in seconds. this is only used if Scanner sync is set to False
-    contrast: 0.8
+    Bar step length: 1.5            # in seconds. this is only used if Scanner sync is set to False
+    contrast: 0.05
