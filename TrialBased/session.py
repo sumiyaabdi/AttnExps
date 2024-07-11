@@ -17,7 +17,7 @@ from psychopy.visual import filters
 
 from exptools2.core import Session, PylinkEyetrackerSession
 from trial import BaselineTrial, PRFTrial, PsychophysTrial
-from stim import PRFStim, AttSizeStim, FixationStim, cross_fixation
+from TrialBased.stimulus import PRFStim, AttSizeStim, FixationStim, cross_fixation
 from utils import create_stim_list, get_stim_nr,psyc_stim_list
 
 
