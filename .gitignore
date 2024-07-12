@@ -9,3 +9,5 @@ logs/
 
 #hidden files
 Experiment/.*
+
+.ipynb*
