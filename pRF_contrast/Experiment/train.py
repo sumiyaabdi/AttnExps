@@ -22,10 +22,8 @@ def main():
     name = 'train'
     task = 'yesno'
 
-<<<<<<<< HEAD:AttnPrecision/Experiment/train.py
     task = 'yesno'
     attn = 's'
-========
     contrast=''
     while contrast not in ('low', 'high','l','h'):
         contrast = input("Which bar contrast ['l' / 'h']?: ")
@@ -33,7 +31,6 @@ def main():
     attn = 's'
     # while attn not in ('s','l'):
     #     attn = input('Which attention size [small (s) / large (l)]?: ')
->>>>>>>> pRFcontr:pRF_contrast/Experiment/train.py
 
     eyetrack = ''
     while eyetrack not in ('y','yes','n','no'):

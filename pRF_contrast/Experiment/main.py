@@ -18,17 +18,13 @@ def main():
     sess =  sys.argv[2] # e.g. 1
     run = sys.argv[3] # e.g. 0
     name = 'exp'
-<<<<<<<< HEAD:AttnPrecision/Experiment/main.py
-
     task = 'yesno'
     attn = 's'
 
     eyetrack = 'n'
     while eyetrack not in ('y','yes','n','no'):
         eyetrack = input('Eyetracking (y/n)?: ')
-========
     task = 'yesno'
->>>>>>>> pRFcontr:pRF_contrast/Experiment/main.py
     
     contrast=''
     while contrast not in ('low', 'high','l','h'):
