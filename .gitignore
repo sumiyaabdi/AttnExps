@@ -10,4 +10,4 @@ logs/
 #hidden files
 Experiment/.*
 
-.ipynb*
+*.ipynb_checkpoints*
