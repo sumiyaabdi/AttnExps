@@ -249,6 +249,8 @@ class PsychophysTrial(Trial):
         # uncomment below to draw diagonal fixation lines
         self.session.line1.draw()
         self.session.line2.draw()
+        self.session.hemistim.draw()    
+
 
         if self.phase == 0:
             self.session.draw_attn_stimulus()

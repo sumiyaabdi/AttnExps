@@ -17,7 +17,7 @@ from psychopy.visual import filters
 
 from exptools2.core import Session, PylinkEyetrackerSession
 from trial import BaselineTrial, PRFTrial, PsychophysTrial
-from stim import PRFStim, AttSizeStim, FixationStim, cross_fixation
+from stim import PRFStim, AttSizeStim, FixationStim,cross_fixation,HemiFieldStim
 from utils import create_stim_list, get_stim_nr,psyc_stim_list
 
 
@@ -105,6 +105,14 @@ class PRFSession(PylinkEyetrackerSession):
                                         size=mask_size,
                                         pos = np.array((0.0,0.0)), 
                                         color = [0,0,0])
+        
+        self.hemistim = HemiFieldStim(session=self, 
+                                        angular_cycles=self.settings['radial'].get('angular_cycles'), 
+                                        radial_cycles=self.settings['radial'].get('radial_cycles'), 
+                                        border_radius=self.settings['radial'].get('border_radius'), 
+                                        pacman_angle=self.settings['radial'].get('pacman_angle'), 
+                                        n_mask_pixels=self.settings['radial'].get('n_mask_pixels'), 
+                                        frequency=self.settings['radial'].get('frequency'))
 
         self.largeAF = AttSizeStim(self,
                                    n_sections=self.settings['large_task']['n_sections'],

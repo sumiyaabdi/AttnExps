@@ -21,17 +21,17 @@ def main():
     run = sys.argv[3] # e.g. 0
     name = 'train'
 
-    task = ''
-    while task not in ('2afc', 'yesno'):
-        task = input("Which attention task ['2afc' / 'yesno']?: ")
+    task = 'yesno'
+    # while task not in ('2afc', 'yesno'):
+    #     task = input("Which attention task ['2afc' / 'yesno']?: ")
 
-    attn = ''
-    while attn not in ('s','l'):
-        attn = input('Which attention size [small (s) / large (l)]?: ')
+    attn = 's'
+    # while attn not in ('s','l'):
+    #     attn = input('Which attention size [small (s) / large (l)]?: ')
 
-    eyetrack = ''
-    while eyetrack not in ('y','yes','n','no'):
-        eyetrack = input('Eyetracking (y/n)?: ')
+    eyetrack = 'n'
+    # while eyetrack not in ('y','yes','n','no'):
+    #     eyetrack = input('Eyetracking (y/n)?: ')
     
     output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
     print(f'Output folder: {output_str}')
@@ -42,7 +42,7 @@ def main():
         print("Warning: output directory already exists. Renaming to avoid overwriting.")
         output_dir = output_dir + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    settings_file=f'expsettings/{name}settings_'+task+'.yml'
+    settings_file=f'expsettings/settings.yml'
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
     

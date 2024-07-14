@@ -6,7 +6,9 @@ Created on Mon Feb 25 14:07:02 2019
 @author: marcoaqil
 """
 import numpy as np
-from psychopy import visual, tools, RadialStim
+from psychopy import visual, tools
+# from psychopy.visual import RadialStim
+from psychopy_visionscience.radial import RadialStim
 # np.random.seed(2021)
 
 def cross_fixation(win, size=0.1, color=(1,1,1), **kwargs):
@@ -177,6 +179,18 @@ class HemiFieldStim(object):
         mask[-int(border_radius*n_mask_pixels):] = (np.cos(np.linspace(0,np.pi,int(border_radius*n_mask_pixels)))+1)/2
         mask[:int(border_radius*n_mask_pixels)] = (np.cos(np.linspace(0,np.pi,int(border_radius*n_mask_pixels))[::-1])+1)/2
 
+        self.stimulus = RadialStim(win=self.session.win, 
+                                    mask=mask, 
+                                    size=(1000.0, 1000.0), 
+                                    radialCycles=self.radial_cycles, 
+                                    angularCycles=self.angular_cycles, 
+                                    texRes=128, 
+                                    angularRes=100, 
+                                    visibleWedge=(0,360), 
+                                    pos=(0.0, 0.0),
+                                    ori=180,
+                                    color=1)
+
         self.stimulus_1 = RadialStim(win=self.session.win, 
                                     mask=mask, 
                                     size=(1000.0, 1000.0), 
@@ -202,14 +216,14 @@ class HemiFieldStim(object):
 
     def draw(self):
 
-        rotationRate = 0.1  # revs per sec
-        t = 0
-        phase = np.fmod(self.session.settings['design'].get('stim_duration')+self.session.timer.getTime(), 1.0/self.frequency) * self.frequency
+        # rotationRate = 0.1  # revs per sec
+        # t = 0
+        # phase = np.fmod(self.session.settings['design'].get('stim_duration')+self.session.timer.getTime(), 1.0/self.frequency) * self.frequency
         
-        if phase < 0.5:         
-            self.stimulus_1.draw()
-        else:         
-            self.stimulus_2.draw()
+        # if phase < 0.5:         
+        #     self.stimulus_1.draw()
+        # else:         
+        self.stimulus.draw()
 
 class PRFStim(object):  
     def __init__(self, session, 
