@@ -156,6 +156,19 @@ class AttSizeStim():
                                       opacity=0.1)
             self.ring.draw()
 
+class TaskCue():
+    """Before every trial there is a cue at fixation to indicate the task that will be performed.
+    Either W for whole screen or F for fixation.
+    """
+
+    def __init__(self,session,text,**kwargs):
+        self.session = session
+        self.text = text
+        self.cue = visual.TextStim(self.session.win, text=text, color=-1, height=0.1)
+
+    def draw(self):
+        self.cue.draw()
+
 class HemiFieldStim(object):
 
     def __init__(self, 

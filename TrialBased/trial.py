@@ -228,6 +228,23 @@ class PRFTrial(Trial):
                     self.last_resp = key
                     self.last_resp_onset = t
 
+class BlankTrial(Trial):
+    def __init__(self, session, trial_nr, *args, **kwargs):
+
+        self.session = session
+        phase_durations = [self.session.settings['attn_task']['duration']]
+
+        super().__init__(session, trial_nr, phase_durations, *args, **kwargs)
+
+class AttnTrial(Trial):
+    def __init__(self, session, trial_nr, *args, **kwargs):
+
+        self.session = session
+        phase_durations = [0.5, 0.3, 0.45, 0.3, 0.45, 0.3, 1.3] # 3 task + stimulus, 1.3 ITI
+
+        super().__init__(session, trial_nr, phase_durations, *args, **kwargs)
+
+
 class PsychophysTrial(Trial):
     def __init__(self, session, trial_nr, bar_orientation, bar_position_in_ori,
                  bar_direction, *args, **kwargs):
@@ -241,17 +258,15 @@ class PsychophysTrial(Trial):
         super().__init__(session, trial_nr, phase_durations, *args, **kwargs)
 
     def draw(self, *args, **kwargs):
-        # draw bar stimulus and circular (raised cosine) aperture from Session class
-        """ Draws stimuli """
-        # self.session.draw_prf_stimulus()
-        # self.session.mask_stim.draw()
+        # draw attention task stimulus & mapper
 
-        # uncomment below to draw diagonal fixation lines
+        """ Draws stimuli """
+
         self.session.hemistim.draw()    
         self.session.inner_mask_stim.draw()
         self.session.outer_mask_stim.draw()
 
-        self.session.line1.draw()
+        self.session.line1.draw() # fixation guides
         self.session.line2.draw()
 
 
