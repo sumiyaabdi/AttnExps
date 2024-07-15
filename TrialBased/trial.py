@@ -247,9 +247,12 @@ class PsychophysTrial(Trial):
         # self.session.mask_stim.draw()
 
         # uncomment below to draw diagonal fixation lines
+        self.session.hemistim.draw()    
+        self.session.inner_mask_stim.draw()
+        self.session.outer_mask_stim.draw()
+
         self.session.line1.draw()
         self.session.line2.draw()
-        self.session.hemistim.draw()    
 
 
         if self.phase == 0:

@@ -21,7 +21,7 @@ def main():
     run = sys.argv[3] # e.g. 0
     name = 'train'
 
-    task = 'yesno'
+    task = '2afc'
     # while task not in ('2afc', 'yesno'):
     #     task = input("Which attention task ['2afc' / 'yesno']?: ")
 

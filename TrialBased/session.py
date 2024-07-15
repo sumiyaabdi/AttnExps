@@ -90,7 +90,8 @@ class PRFSession(PylinkEyetrackerSession):
             mask_size = [self.win.size[0],self.win.size[1]]
 
         #generate raised cosine alpha mask
-        mask = filters.makeMask(matrixSize=self.screen[0],
+
+        outer_mask = filters.makeMask(matrixSize=self.screen[0],
                                 shape='raisedCosine', 
                                 radius=np.array([self.screen[1]/self.screen[0], 1.0]),
                                 center=(0.0, 0.0), 
@@ -98,16 +99,23 @@ class PRFSession(PylinkEyetrackerSession):
                                 fringeWidth=0.02
                                 )
 
-        self.mask_stim = visual.GratingStim(self.win, 
-                                        mask=-mask, 
+        self.outer_mask_stim = visual.GratingStim(self.win, 
+                                        mask=-outer_mask, 
                                         tex=None, 
                                         units='pix',
-                                        size=mask_size,
+                                        size=self.screen,
                                         pos = np.array((0.0,0.0)), 
                                         color = [0,0,0])
         
+        self.inner_mask_stim = visual.Circle(self.win, 
+                                    contrast=1,
+                                    radius=2, 
+                                    fillColor=0, 
+                                    edges='circle')
+        
         self.hemistim = HemiFieldStim(session=self, 
                                         angular_cycles=self.settings['radial'].get('angular_cycles'), 
+                                        angular_res=self.settings['radial'].get('angular_res'), 
                                         radial_cycles=self.settings['radial'].get('radial_cycles'), 
                                         border_radius=self.settings['radial'].get('border_radius'), 
                                         pacman_angle=self.settings['radial'].get('pacman_angle'), 

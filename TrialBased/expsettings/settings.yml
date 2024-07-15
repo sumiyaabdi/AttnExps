@@ -4,10 +4,10 @@ preferences:
         units: deg
 
 window:
-    size: [1920, 1080] #[1440, 900] #
+    size: [1920, 1080] #mac:[3024, 1964] #
     pos: [0, 0]
     color: [0, 0, 0]
-    fullscr: True
+    fullscr: False
     winType: pyglet
     waitBlanking: True
 
@@ -15,9 +15,9 @@ operating system: linux
 
 monitor:
     name: default
-    width: 69.8 # in cm, mac: 28.65
-    distance: 210  # in cm, mac: 53.854
-    gamma: 2.1
+    width: 29.82 # BOLD: 69.8 # in cm, mac: 
+    distance: 53.854 #210  # in cm, mac: 
+    gamma: 2.2 # change to 2.1 for scanning
 
 mouse:
     visible: False
@@ -77,11 +77,12 @@ small_task:
 
 radial:
 #   aperture_radius: 1500
-  angular_cycles: 20
-  radial_cycles: 24
-  border_radius: 0.2
-  n_mask_pixels: 100
-  frequency: 8.0
+  angular_cycles: 30
+  angular_res: 100
+  radial_cycles: 30
+  border_radius: 0.1
+  n_mask_pixels: 0
+  frequency: 8.0 
   pacman_angle: 5
 
 fixation stim:
