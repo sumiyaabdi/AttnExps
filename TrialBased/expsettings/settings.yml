@@ -45,12 +45,22 @@ psychophysics:
     small_range: [0.1, 0.15, 0.2, 0.3, 0.4 ,0.5, 0.6, 0.7, 0.8, 0.85,0.9]
 
 attn_task:
-  stim_per_trial: 2
-  signal: 6
-  baseline_start: 20 #seconds
-  baseline_end: 30 #seconds
-  resp_keys: [1.0, 2.0] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
-  interp_values: [0.1,0.9]
+    stim_per_trial: 3
+    signal: 6
+    baseline_start: 20 #seconds
+    baseline_end: 30 #seconds
+    resp_keys: [1.0, 2.0] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
+    interp_values: [0.1,0.9]
+    n_trials: 150
+    n_small_trials: 100
+    n_large_trials: 50
+    blank_trials_pos: [30, 70, 110]
+
+cue:
+    duration: 0.5
+    jitter: 0.5
+    color: -2
+    size: 0.25
 
 large_task:
     n_sections: 1

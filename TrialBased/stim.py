@@ -161,7 +161,7 @@ class TaskCue():
     Either W for whole screen or F for fixation.
     """
 
-    def __init__(self,session,text,**kwargs):
+    def __init__(self,session,text='W',**kwargs):
         self.session = session
         self.text = text
         self.cue = visual.TextStim(self.session.win, text=text, color=-1, height=0.1)

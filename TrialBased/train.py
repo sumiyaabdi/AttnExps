@@ -7,7 +7,7 @@ Created on Mon Feb 25 14:04:44 2019
 """
 import sys
 import yaml
-from session import PRFSession, PsychophysSession
+from session import AttnSession
 from analyse import *
 from datetime import datetime
 
@@ -52,34 +52,15 @@ def main():
     elif attn == 'l' and task == 'yesno':
         print(f"\nColor Range: {settings['large_task']['color_range']}")
 
-    if len(sys.argv) < 5:
-        if task == 'yesno':
-            if (eyetrack == 'n') or (eyetrack == 'no'):
-                ts = PRFSession(output_str=output_str,
-                                output_dir=output_dir,
-                                settings_file=settings_file,
-                                eyetracker_on=False)
-            else:
-                ts = PRFSession(output_str=output_str,
-                                output_dir=output_dir,
-                                settings_file=settings_file)
-            ts.create_stimuli()
-            ts.create_trials()
-            ts.run()
 
-        elif task == '2afc':
-            if (eyetrack == 'n') or (eyetrack == 'no'):
-                ts = PsychophysSession(output_str=output_str,
-                                    output_dir=output_dir,
-                                    settings_file=settings_file,
-                                    eyetracker_on=False)
-            else:
-                ts = PsychophysSession(output_str=output_str,
-                                    output_dir=output_dir,
-                                    settings_file=settings_file)
-            ts.create_stimuli()
-            ts.create_trials()
-            ts.run()
+    ts = AttnSession(output_str=output_str,
+                        output_dir=output_dir,
+                        settings_file=settings_file,
+                        eyetracker_on=False)
+
+    ts.create_stimuli()
+    ts.create_trials()
+    ts.run()
 
     return output_str, task, attn, subject,name
 
