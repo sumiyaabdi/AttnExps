@@ -54,7 +54,7 @@ attn_task:
     n_trials: 150
     n_small_trials: 100
     n_large_trials: 50
-    blank_trials_pos: [30, 70, 110]
+    blank_trials_pos: [3,6,10,30, 70, 110]
 
 cue:
     duration: 0.5
@@ -102,99 +102,98 @@ fixation stim:
   default_color: 0
 
 trial_types:
-    1:
-        attn_precision: 'small'
-        large_present: True
+    '1':
+        cue: 's'
+        draw_large: True
         large_opacity: 0.2
-        mapper_present: True
+        draw_mapper: True
         mapper_contrast: 0.05
-    2:
-        attn_precision: 'small'
-        large_present: True
+    '2':
+        cue: 's'
+        draw_large: True
         large_opacity: 0.2
-        mapper_present: True
+        draw_mapper: True
         mapper_contrast: 0.8
-    3:
-        attn_precision: 'small'
-        large_present: True
+    '3':
+        cue: 's'
+        draw_large: True
         large_opacity: 0.8
-        mapper_present: True
+        draw_mapper: True
         mapper_contrast: 0.05
 
-    4:
-        attn_precision: 'small'
-        large_present: True
+    '4':
+        cue: 's'
+        draw_large: True
         large_opacity: 0.8
-        mapper_present: True
+        draw_mapper: True
         mapper_contrast: 0.05
 
-    5:
-        attn_precision: 'small'
-        large_present: False
+    '5':
+        cue: 's'
+        draw_large: False
         large_opacity: 0
-        mapper_present: True
+        draw_mapper: True
         mapper_contrast: 0.05
 
-    6:
-        attn_precision: 'small'
-        large_present: False
+    '6':
+        cue: 's'
+        draw_large: False
         large_opacity: 0
-        mapper_present: True
+        draw_mapper: True
         mapper_contrast: 0.8
-    7:
-        attn_precision: 'large'
-        large_present: True
+    '7':
+        cue: 'l'
+        draw_large: True
         large_opacity: 0.2
-        mapper_present: True
-        mapper_contrast: 0.052
-    8:
-        attn_precision: 'large'
-        large_present: True
-        large_opacity: 0.2
-        mapper_present: True
-        mapper_contrast: 0.8
-    9:
-        attn_precision: 'large'
-        large_present: True
-        large_opacity: 0.8
-        mapper_present: True
+        draw_mapper: True
         mapper_contrast: 0.05
-
-    10:
-        attn_precision: 'large'
-        large_present: True
-        large_opacity: 0.8
-        mapper_present: True
+    '8':
+        cue: 'l'
+        draw_large: True
+        large_opacity: 0.2
+        draw_mapper: True
         mapper_contrast: 0.8
-    11:
-        attn_precision: 'small'
-        large_present: True
-        large_opacity: 0.2
-        mapper_present: False
-        mapper_contrast: 0
-    12:
-        attn_precision: 'small'
-        large_present: True
+    '9':
+        cue: 'large'
+        draw_large: True
         large_opacity: 0.8
-        mapper_present: False
+        draw_mapper: True
+        mapper_contrast: 0.05
+    '10':
+        cue: 'l'
+        draw_large: True
+        large_opacity: 0.8
+        draw_mapper: True
+        mapper_contrast: 0.8
+    '11':
+        cue: 's'
+        draw_large: True
+        large_opacity: 0.2
+        draw_mapper: False
         mapper_contrast: 0
-    13:
-        attn_precision: 'small'
-        large_present: False
+    '12':
+        cue: 's'
+        draw_large: True
+        large_opacity: 0.8
+        draw_mapper: False
+        mapper_contrast: 0
+    '13':
+        cue: 's'
+        draw_large: False
         large_opacity: 0
-        mapper_present: False
+        draw_mapper: False
         mapper_contrast: 0
-    14:
-        attn_precision: 'large'
-        large_present: True
+    '14':
+        cue: 'l'
+        draw_large: True
         large_opacity: 0.2
-        mapper_present: False
+        draw_mapper: False
         mapper_contrast: 0
-    15:
-        attn_precision: 'large'
-        large_present: True
+    '15':
+        cue: 'l'
+        draw_large: True
         large_opacity: 0.8
-        mapper_present: False
+        draw_mapper: False
         mapper_contrast: 0
 
 PRF stimulus settings:

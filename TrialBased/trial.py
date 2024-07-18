@@ -240,19 +240,16 @@ class AttnTrial(Trial):
                 *args, 
                 **kwargs):
 
-        # self.session = session
-        # self.trial_nr=trial_nr
         self.cue=cue
         self.draw_large=draw_large
-        # self.draw_small=draw_small
         self.large_opacity=large_opacity
         self.draw_mapper=draw_mapper
         self.mapper_contrast=mapper_contrast
 
-        phase_durations = [0.5, 0.3, 0.45, 0.3, 0.45, 0.3, 1.3] # 3 task + stimulus, 1.3 ITI
+        # phase_durations = [0.5, 0.3, 0.45, 0.3, 0.45, 0.3, 1.3] # 3 task + stimulus, 1.3 ITI
         phase_durations = [0.5, 0.375, 0.375,0.375, 0.375, 0.375, 1.3] # 3 task + stimulus, 1.3 ITI
 
-        super().__init__(session, trial_nr, phase_durations, *args, **kwargs)
+        super().__init__(session, trial_nr, phase_durations=phase_durations, *args, **kwargs)
 
     def draw(self, *args, **kwargs):
         """Draws stimuli"""
@@ -261,9 +258,8 @@ class AttnTrial(Trial):
         self.session.line2.draw()
         self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
 
-
         if self.phase == 0:
-            self.session.display_text(self.cue, 
+            self.session.display_text(self.cue.upper(), 
                                       height=self.session.settings['cue']['size'],
                                       duration=self.phase_durations[self.phase],
                                       color=self.session.settings['cue']['color'])
@@ -275,9 +271,6 @@ class AttnTrial(Trial):
             
             self.session.draw_small_stimulus()
 
-        # elif self.phase % 2 == 1:
-            # self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
-
 class BlankTrial(AttnTrial):
     def __init__(self, session, trial_nr, *args, **kwargs):
         phase_durations = [0.5, 0.3, 0.45, 0.3, 0.45, 0.3, 1.3] # 3 task + stimulus, 1.3 ITI
@@ -287,6 +280,8 @@ class BlankTrial(AttnTrial):
     def draw(self,*args, **kwargs):
         self.session.line1.draw() # fixation guides
         self.session.line2.draw()
+        self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
+
 
 class PsychophysTrial(Trial):
     def __init__(self, session, trial_nr, bar_orientation, bar_position_in_ori,

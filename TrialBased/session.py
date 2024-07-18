@@ -8,6 +8,7 @@ Created on Mon Feb 25 14:05:10 2019
 
 import numpy as np
 import os
+import random
 
 import sys
 sys.path.append('../../exptools2')
@@ -146,14 +147,20 @@ class AttnSession(PylinkEyetrackerSession):
                                                 ))
                 continue
             else:
+                cond=str(random.randint(1,15))
                 self.trials.append(AttnTrial(session=self,
                                             trial_nr=i,
-                                            cue='S',
-                                            draw_large=True,
-                                            large_opacity=1,
-                                            draw_mapper=True,
-                                            mapper_contrast=0.8
+                                            **self.settings['trial_types'][cond]
                                             ))
+                
+                # self.trials.append(AttnTrial(session=self,
+                #                             trial_nr=i,
+                #                             cue='S',
+                #                             draw_large=True,
+                #                             large_opacity=1,
+                #                             draw_mapper=True,
+                #                             mapper_contrast=0.8
+                #                             ))
     
     def draw_small_stimulus(self):
         self.stim_nr = self.current_trial.trial_nr
