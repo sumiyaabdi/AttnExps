@@ -250,6 +250,8 @@ class AttnTrial(Trial):
         self.mapper_contrast=mapper_contrast
 
         phase_durations = [0.5, 0.3, 0.45, 0.3, 0.45, 0.3, 1.3] # 3 task + stimulus, 1.3 ITI
+        phase_durations = [0.5, 0.375, 0.375,0.375, 0.375, 0.375, 1.3] # 3 task + stimulus, 1.3 ITI
+
         super().__init__(session, trial_nr, phase_durations, *args, **kwargs)
 
     def draw(self, *args, **kwargs):
