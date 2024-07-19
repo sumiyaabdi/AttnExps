@@ -246,8 +246,8 @@ class AttnTrial(Trial):
         self.draw_mapper=draw_mapper
         self.mapper_contrast=mapper_contrast
 
-        # phase_durations = [0.5, 0.3, 0.45, 0.3, 0.45, 0.3, 1.3] # 3 task + stimulus, 1.3 ITI
-        phase_durations = [0.5, 0.375, 0.375,0.375, 0.375, 0.375, 1.3] # 3 task + stimulus, 1.3 ITI
+        # phase_durations = [0.5, 0.375, 0.375,0.375, 0.375, 0.375, 1.3] # 3 task + stimulus, 1.3 ITI
+        phase_durations = [0.5,0.2,1,1.9]
 
         super().__init__(session, trial_nr, phase_durations=phase_durations, *args, **kwargs)
 
@@ -259,11 +259,20 @@ class AttnTrial(Trial):
         self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
 
         if self.phase == 0:
-            self.session.display_text(self.cue.upper(), 
-                                      height=self.session.settings['cue']['size'],
-                                      duration=self.phase_durations[self.phase],
-                                      color=self.session.settings['cue']['color'])
-        elif self.phase % 2 == 1:
+            if self.cue.upper() == 'S':
+                self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'),
+                                             lineColor=self.session.settings['cue']['color'],
+                                             lineWidth=self.session.settings['fixation stim']['line_width'])
+            elif self.cue.upper() == 'L':
+                self.session.cue_line1.draw()
+                self.session.cue_line2.draw()
+                self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
+
+            # self.session.display_text(self.cue.upper(), 
+            #                           height=self.session.settings['cue']['size'],
+            #                           duration=self.phase_durations[self.phase],
+            #                           color=self.session.settings['cue']['color'])
+        elif (self.phase % 2 == 0):
             if self.draw_mapper:
                 self.session.draw_mapper(contrast=self.mapper_contrast)
             if self.draw_large:

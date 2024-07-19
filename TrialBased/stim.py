@@ -132,7 +132,7 @@ class AttSizeStim():
         self.color_orders = np.array(self.color_orders)
 
 
-    def draw(self, color_balance, stim_nr):
+    def draw(self, color_balance, stim_nr,opacity):
         if self.jitter != None:
             self.element_array_stim.setXYs(self.element_array_np[:,[0,1]]+self.j[stim_nr])
 
@@ -145,6 +145,7 @@ class AttSizeStim():
 
         self.element_array_np[this_ring_bool, 5:8] = ordered_signals
         self.element_array_stim.setColors(ordered_signals, log=False)
+        self.element_array_stim.setOpacities(opacity)
 
         self.element_array_stim.draw()
 
@@ -179,7 +180,9 @@ class HemiFieldStim(object):
                 border_radius, 
                 pacman_angle=20,
                 n_mask_pixels=1000,
-                frequency=8.0):
+                frequency=8.0,
+                eccentricity=3.0,
+                width=1):
         
         self.session = session
         self.angular_cycles = angular_cycles
@@ -189,6 +192,8 @@ class HemiFieldStim(object):
         self.pacman_angle = pacman_angle
         self.n_mask_pixels = n_mask_pixels
         self.frequency = frequency
+        self.eccentricity = eccentricity
+        self.width = width
 
         # cosine mask, blurs the edges of the stimulus
         mask = np.ones((n_mask_pixels))
@@ -196,8 +201,8 @@ class HemiFieldStim(object):
         mask[:int(border_radius*n_mask_pixels)] = 0 #(np.cos(np.linspace(0,np.pi,int(border_radius*n_mask_pixels))[::-1])+1)/2
 
         self.stimulus1 = RadialStim(win=self.session.win, 
-                                    mask=mask, 
-                                    size=(50,50),#(1000.0, 1000.0), 
+                                    mask='raisedCos', 
+                                    size=((self.eccentricity+self.width)*2,(self.eccentricity+self.width)*2),#(1000.0, 1000.0), 
                                     radialCycles=self.radial_cycles, 
                                     angularCycles=self.angular_cycles, 
                                     texRes=128, 
@@ -205,11 +210,10 @@ class HemiFieldStim(object):
                                     visibleWedge=(0,360), 
                                     pos=(0.0, 0.0),
                                     ori=180,
-                                    color=1,
-                                    opacity=0.3)
+                                    color=1)
         self.stimulus2 = RadialStim(win=self.session.win, 
-                                    mask=mask, 
-                                    size=(50,50),#(1000.0, 1000.0), 
+                                    mask='raisedCos', 
+                                    size=((self.eccentricity+self.width)*2,(self.eccentricity+self.width)*2), 
                                     radialCycles=self.radial_cycles, 
                                     angularCycles=self.angular_cycles, 
                                     texRes=128, 
@@ -217,40 +221,26 @@ class HemiFieldStim(object):
                                     visibleWedge=(0,360), 
                                     pos=(0.0, 0.0),
                                     ori=180,
-                                    color=-1,
-                                    opacity=0.3)
-#       #JH's stimulus1, stimulus 2
-        # self.stimulus_1 = RadialStim(win=self.session.win, 
-        #                             mask=mask, 
-        #                             size=(1000.0, 1000.0), 
-        #                             radialCycles=self.radial_cycles, 
-        #                             angularCycles=self.angular_cycles, 
-        #                             texRes=128, 
-        #                             angularRes=100, 
-        #                             visibleWedge=(180+pacman_angle, 360-pacman_angle), 
-        #                             pos=(0.0, 0.0),
-        #                             ori=180,
-        #                             color=1)
-        # self.stimulus_2 = RadialStim(win=self.session.win, 
-        #                             mask=mask, 
-        #                             size=(1000.0, 1000.0), 
-        #                             radialCycles=self.radial_cycles,
-        #                             angularCycles=self.angular_cycles, 
-        #                             texRes=128, 
-        #                             angularRes=100, 
-        #                             visibleWedge=(180+pacman_angle, 360-pacman_angle), 
-        #                             pos=(0.0, 0.0),
-        #                             ori=180,
-        #                             color=-1)
+                                    color=-1)
 
-    def draw(self):
+        self.inner_mask_stim = visual.Circle(self.session.win, 
+                            radius=self.eccentricity, 
+                            fillColor=0, 
+                            edges='circle')
+
+
+    def draw(self,contrast):
 
         stim_phase=np.mod(self.session.timer.getTime(), 1.0/self.frequency) * self.frequency
         
-        if stim_phase < 0.5:         
+        if stim_phase < 0.5:      
+            self.stimulus1.setContrast(contrast)   
             self.stimulus1.draw()
+            self.inner_mask_stim.draw()
         else:         
+            self.stimulus2.setContrast(contrast)   
             self.stimulus2.draw()
+            self.inner_mask_stim.draw()
 
 class PRFStim(object):  
     def __init__(self, session, 
