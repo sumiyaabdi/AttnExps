@@ -7,8 +7,12 @@ Created on Mon Feb 25 14:07:02 2019
 """
 import numpy as np
 from psychopy import visual, tools
-# from psychopy.visual import RadialStim
-from psychopy_visionscience.radial import RadialStim
+import os
+# workaround for conda env differences between local and MINERVA
+if '/data1/' in os.getcwd(): 
+    from psychopy.visual import RadialStim
+else:
+    from psychopy_visionscience.radial import RadialStim
 # np.random.seed(2021)
 
 def cross_fixation(win, size=0.1, color=(1,1,1), **kwargs):
@@ -23,11 +27,18 @@ class FixationStim():
     def __init__(self, session):
         self.session = session
 
-    def draw(self, color=0, radius=0.1, outline=True):
+    def draw(self, color=0, radius=0.1, outline=True, lineColor=None,lineWidth=None):
         self.color = [color]*3 # turns into RGB array
         self.radius = radius
         if outline:
-            self.stim = visual.Circle(self.session.win, lineColor=self.session.settings['fixation stim']['line_color'],
+            if lineColor:
+                self.stim = visual.Circle(self.session.win,
+                                      lineWidth=self.session.settings['fixation stim']['line_width'],
+                                      lineColor=lineColor,
+                                      contrast=self.session.settings['fixation stim']['contrast'],
+                                      radius=radius, fillColor=self.color, edges=100)
+            else:
+                self.stim = visual.Circle(self.session.win, lineColor=self.session.settings['fixation stim']['line_color'],
                                       lineWidth=self.session.settings['fixation stim']['line_width'],
                                       contrast=self.session.settings['fixation stim']['contrast'],
                                       radius=radius, fillColor=self.color, edges=100)
@@ -181,8 +192,8 @@ class HemiFieldStim(object):
                 pacman_angle=20,
                 n_mask_pixels=1000,
                 frequency=8.0,
-                eccentricity=3.0,
-                width=1):
+                outer_radius=5.0,
+                inner_radius=0.0):
         
         self.session = session
         self.angular_cycles = angular_cycles
@@ -192,17 +203,17 @@ class HemiFieldStim(object):
         self.pacman_angle = pacman_angle
         self.n_mask_pixels = n_mask_pixels
         self.frequency = frequency
-        self.eccentricity = eccentricity
-        self.width = width
+        self.outer_radius = outer_radius
+        self.inner_radius = inner_radius
 
         # cosine mask, blurs the edges of the stimulus
         mask = np.ones((n_mask_pixels))
-        mask[-int(border_radius*n_mask_pixels):] = 0 #(np.cos(np.linspace(0,np.pi,int(border_radius*n_mask_pixels)))+1)/2
-        mask[:int(border_radius*n_mask_pixels)] = 0 #(np.cos(np.linspace(0,np.pi,int(border_radius*n_mask_pixels))[::-1])+1)/2
+        # mask[-int(border_radius*n_mask_pixels):] = 0 #(np.cos(np.linspace(0,np.pi,int(border_radius*n_mask_pixels)))+1)/2
+        # mask[:int(border_radius*n_mask_pixels)] = 0 #(np.cos(np.linspace(0,np.pi,int(border_radius*n_mask_pixels))[::-1])+1)/2
 
         self.stimulus1 = RadialStim(win=self.session.win, 
-                                    mask='raisedCos', 
-                                    size=((self.eccentricity+self.width)*2,(self.eccentricity+self.width)*2),#(1000.0, 1000.0), 
+                                    mask=mask, 
+                                    size=(2*self.outer_radius,2*self.outer_radius),
                                     radialCycles=self.radial_cycles, 
                                     angularCycles=self.angular_cycles, 
                                     texRes=128, 
@@ -212,8 +223,8 @@ class HemiFieldStim(object):
                                     ori=180,
                                     color=1)
         self.stimulus2 = RadialStim(win=self.session.win, 
-                                    mask='raisedCos', 
-                                    size=((self.eccentricity+self.width)*2,(self.eccentricity+self.width)*2), 
+                                    mask=mask, 
+                                    size=(2*self.outer_radius,2*self.outer_radius),
                                     radialCycles=self.radial_cycles, 
                                     angularCycles=self.angular_cycles, 
                                     texRes=128, 
@@ -224,9 +235,9 @@ class HemiFieldStim(object):
                                     color=-1)
 
         self.inner_mask_stim = visual.Circle(self.session.win, 
-                            radius=self.eccentricity, 
+                            radius=self.inner_radius, 
                             fillColor=0, 
-                            edges='circle')
+                            edges=100)
 
 
     def draw(self,contrast):

@@ -234,22 +234,22 @@ class AttnTrial(Trial):
                 trial_nr, 
                 cue='F',
                 draw_large=True,
-                large_opacity=1,
+                large_opacity='high',
                 draw_mapper=True,
-                mapper_contrast=0.8,
+                mapper_contrast='high',
+                parameters={},
                 *args, 
                 **kwargs):
 
-        self.cue=cue
-        self.draw_large=draw_large
-        self.large_opacity=large_opacity
-        self.draw_mapper=draw_mapper
-        self.mapper_contrast=mapper_contrast
-
-        # phase_durations = [0.5, 0.375, 0.375,0.375, 0.375, 0.375, 1.3] # 3 task + stimulus, 1.3 ITI
         phase_durations = [0.5,0.2,1,1.9]
 
         super().__init__(session, trial_nr, phase_durations=phase_durations, *args, **kwargs)
+
+        self.cue=cue
+        self.draw_large=draw_large
+        self.draw_mapper=draw_mapper
+        self.parameters = parameters
+
 
     def draw(self, *args, **kwargs):
         """Draws stimuli"""
@@ -268,17 +268,54 @@ class AttnTrial(Trial):
                 self.session.cue_line2.draw()
                 self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
 
-            # self.session.display_text(self.cue.upper(), 
-            #                           height=self.session.settings['cue']['size'],
-            #                           duration=self.phase_durations[self.phase],
-            #                           color=self.session.settings['cue']['color'])
         elif (self.phase % 2 == 0):
+            self.session.win.getMovieFrame()
             if self.draw_mapper:
-                self.session.draw_mapper(contrast=self.mapper_contrast)
+                self.session.draw_mapper(contrast=self.parameters['mapper_contrast'])
             if self.draw_large:
-                self.session.draw_large_stimulus(opacity=self.large_opacity)
+                self.session.draw_large_stimulus(opacity=self.parameters['large_opacity'])
             
             self.session.draw_small_stimulus()
+
+    def get_events(self):
+        """ Logs responses/triggers """
+        events = event.getKeys(timeStamped=self.session.clock)
+        if events:
+            if 'q' in [ev[0] for ev in events]:  # specific key in settings?
+                self.session.close()
+                self.session.quit()
+
+            for key, t in events:
+                if key == self.session.mri_trigger:
+                    event_type = 'pulse'
+                else:
+                    event_type = 'response'
+
+                idx = self.session.global_log.shape[0]
+                self.session.global_log.loc[idx, 'trial_nr'] = self.trial_nr
+                self.session.global_log.loc[idx, 'onset'] = t
+                self.session.global_log.loc[idx, 'event_type'] = event_type
+                self.session.global_log.loc[idx, 'phase'] = self.phase
+                self.session.global_log.loc[idx, 'response'] = key
+
+                # for param, val in self.parameters.items():
+                    # self.session.global_log.loc[idx, param] = val
+                for param, val in self.parameters.items():  # add parameters to log
+                    if type(val) == np.ndarray or type(val) == list:
+                        for i, x in enumerate(val):
+                            self.session.global_log.loc[idx, param+'_%4i'%i] = x 
+                    else:       
+                        self.session.global_log.loc[idx, param] = val
+
+                if self.eyetracker_on:  # send msg to eyetracker
+                    msg = f'start_type-{event_type}_trial-{self.trial_nr}_phase-{self.phase}_key-{key}_time-{t}'
+                    self.session.tracker.sendMessage(msg)
+
+                if key != self.session.mri_trigger:
+                    self.last_resp = key
+                    self.last_resp_onset = t
+
+        return events
 
 class BlankTrial(AttnTrial):
     def __init__(self, session, trial_nr, *args, **kwargs):

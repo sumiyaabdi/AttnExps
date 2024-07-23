@@ -15,8 +15,8 @@ operating system: linux
 
 monitor:
     name: default
-    width: 29.82 # BOLD: 69.8 # in cm, mac: 
-    distance: 53.854 #210  # in cm, mac: 
+    width: 69.8 # in cm, mac: 29.82 # BOLD: 
+    distance: 210  # in cm, mac: 53.854 #
     gamma: 2.2 # change to 2.1 for scanning
 
 mouse:
@@ -41,20 +41,31 @@ mri:
 psychophysics:
     task: True
     bar: False
-    large_range: [0.5,0.5,0.5,0.4,0.6] #[0.1, 0.15, 0.2, 0.3, 0.4 ,0.5, 0.6, 0.7, 0.8, 0.85,0.9]
-    small_range: [0.5,0.5,0.5,0.4,0.6] #[0.1, 0.15, 0.2, 0.3, 0.4 ,0.5, 0.6, 0.7, 0.8, 0.85,0.9]
+    large_range: [0.3,0.7] 
+    small_range: [0.3,0.7] 
 
 attn_task:
-    stim_per_trial: 3
+    stim_per_trial: 1
     signal: 6
     baseline_start: 20 #seconds
     baseline_end: 30 #seconds
-    resp_keys: [1.0, 2.0] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
-    interp_values: [0.1,0.9]
-    n_trials: 150
-    n_small_trials: 100
-    n_large_trials: 50
-    blank_trials_pos: [100]
+    resp_keys: [1.0, 2.0] # IF USING PSYCHOPHYS BUTTON BOX: [1.0, 2.0]; AT SCANNER ['b', 'y']
+    n_blanks_per_mini_block: 4
+    n_mini_blocks: 5
+
+staircase:
+    n_small_trials: 9 
+    n_large_low_trials: 3
+    n_large_high_trials: 3
+    lb: [0.1,0.9] # max easiness of task
+    ub: [0.49,0.51] # max difficulty
+    startPoins: [0.3,0.7]
+    min: 0.01 # same as lb ub but in distance
+    max: 0.9
+    step_size: 0.2
+    stepSizes: [0.1,0.05,0.05,0.02,0.02,0.01,0.01]
+    nUp: 3
+    nDown: 1
 
 fixation stim:
   line_color: black
@@ -65,15 +76,15 @@ fixation stim:
 cue:
     duration: 0.5
     color: 1
-    fixation_line_length: 1    
+    L_cue_length: 0.3
 
 large_task:
     n_sections: 1
     n_rings: 30
     row_spacing: 1
     opacity: 0.8
-    color1: [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
-    color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
+    color1: [-0.8, 0.2, 1] 
+    color2:  [1, -0.3, 0.7] 
     default_balance: 0.5
     color_range: [0.1,0.9]
     jitter: 0.15
@@ -84,115 +95,120 @@ small_task:
     n_rings: 5
     row_spacing: 2
     opacity: 0.25
-    radius: 0.2
-    color1:  [-0.8, 0.2, 1] #[0.3, 0.3, 0.3] # [1,-1,1] #
-    color2:  [1, -0.3, 0.7] # [-0.3, -0.3, -0.3] #  [-1,-0.32,0.12] #
+    radius: 0.1
+    color1:  [-0.8, 0.2, 1] 
+    color2:  [1, -0.3, 0.7] 
     default_balance: 0.5
     color_range: [0.661 , 0.339 ]
 
 radial:
-    angular_cycles: 30
+    angular_cycles: 17
     angular_res: 60
-    radial_cycles: 5
+    radial_cycles: 0
     border_radius: 0.1
     n_mask_pixels: 0
     frequency: 8.0 
-    pacman_angle: 5
-    annulus_eccentricity: 2.5 
-    annulus_width: 0.625
-
+    outer_radius: 2
+    inner_radius: 1.375
 
 trial_types:
+    low_task_opacity: 0.2
+    high_task_opacity: 0.6
+    absent_task_opacity: 0
+    low_mapper_contrast: 0.2
+    high_mapper_contrast: 0.9
+    absent_mapper_contrast: 0
+
     '1':
         cue: 's'
         draw_large: True
-        large_opacity: 0.2
+        large_opacity: low
         draw_mapper: True
-        mapper_contrast: 0.2
+        mapper_contrast: low
     '2':
         cue: 's'
         draw_large: True
-        large_opacity: 0.2
+        large_opacity: low
         draw_mapper: True
-        mapper_contrast: 0.9
+        mapper_contrast: high
     '3':
         cue: 's'
         draw_large: True
-        large_opacity: 0.6
+        large_opacity: high
         draw_mapper: True
-        mapper_contrast: 0.2
+        mapper_contrast: low
     '4':
         cue: 's'
         draw_large: True
-        large_opacity: 0.6
+        large_opacity: high
         draw_mapper: True
-        mapper_contrast: 0.2
+        mapper_contrast: high
     '5':
         cue: 's'
         draw_large: False
-        large_opacity: 0
+        large_opacity: absent
         draw_mapper: True
-        mapper_contrast: 0.2
+        mapper_contrast: low
     '6':
         cue: 's'
         draw_large: False
-        large_opacity: 0
+        large_opacity: absent
         draw_mapper: True
-        mapper_contrast: 0.9
+        mapper_contrast: high
     '7':
         cue: 'l'
         draw_large: True
-        large_opacity: 0.2
+        large_opacity: low
         draw_mapper: True
-        mapper_contrast: 0.2
+        mapper_contrast: low
     '8':
         cue: 'l'
         draw_large: True
-        large_opacity: 0.2
+        large_opacity: low
         draw_mapper: True
-        mapper_contrast: 0.9
+        mapper_contrast: high
     '9':
         cue: 'l'
         draw_large: True
-        large_opacity: 0.6
+        large_opacity: high
         draw_mapper: True
-        mapper_contrast: 0.2
+        mapper_contrast: low
     '10':
         cue: 'l'
         draw_large: True
-        large_opacity: 0.6
+        large_opacity: high
         draw_mapper: True
-        mapper_contrast: 0.9
+        mapper_contrast: high
     '11':
         cue: 's'
         draw_large: True
-        large_opacity: 0.2
+        large_opacity: low
         draw_mapper: False
-        mapper_contrast: 0
+        mapper_contrast: absent
     '12':
         cue: 's'
         draw_large: True
-        large_opacity: 0.6
+        large_opacity: high
         draw_mapper: False
-        mapper_contrast: 0
+        mapper_contrast: absent
     '13':
         cue: 's'
         draw_large: False
-        large_opacity: 0
+        large_opacity: absent
         draw_mapper: False
-        mapper_contrast: 0
+        mapper_contrast: absent
     '14':
         cue: 'l'
         draw_large: True
-        large_opacity: 0.2
+        large_opacity: low
         draw_mapper: False
-        mapper_contrast: 0
+        mapper_contrast: absent
     '15':
         cue: 'l'
         draw_large: True
-        large_opacity: 0.6
+        large_opacity: high
         draw_mapper: False
-        mapper_contrast: 0
+        mapper_contrast: absent
 
 PRF stimulus settings:
     Scanner sync: False                # set this to true to make bar move on input 't'

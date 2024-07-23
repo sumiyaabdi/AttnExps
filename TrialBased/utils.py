@@ -5,7 +5,7 @@ Z = norm.ppf
 def psyc_stim_list(stim_range, n_stim, baseline):
     " Creates stim list for psychophysics task"
     stim_list = stim_range*int(n_stim/len(stim_range))
-    [stim_list.append(i) for i in [baseline]*(n_stim-len(stim_list))]
+    [stim_list.append(i) for i in [baseline]*(n_stim-len(stim_list))] # add baseline trials to fill in the rest
     np.random.shuffle(stim_list)
 
     return stim_list

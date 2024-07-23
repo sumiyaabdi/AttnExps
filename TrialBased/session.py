@@ -7,13 +7,14 @@ Created on Mon Feb 25 14:05:10 2019
 """
 
 import numpy as np
+rng=np.random.default_rng(2024)
 np.random.seed(2024)
 import os
-
+import copy
 import sys
 sys.path.append('../../exptools2')
 
-from psychopy import visual, tools
+from psychopy import visual, tools, data
 from psychopy.visual import filters
 
 from exptools2.core import Session, PylinkEyetrackerSession
@@ -35,7 +36,9 @@ class AttnSession(PylinkEyetrackerSession):
                          settings_file=settings_file, 
                          eyetracker_on=eyetracker_on)
 
-        self.n_trials = 150
+        self.n_trials = 100
+        n_conds=np.arange(1,15)
+        n_conds=np.append(n_conds,[0]*self.settings['attn_task']['n_blanks_per_mini_block'])
         self.conds = np.random.randint(1,15,self.n_trials)
         self.stim_per_trial = self.settings['attn_task']['stim_per_trial']
         self.n_stim = self.n_trials * self.stim_per_trial
@@ -46,7 +49,7 @@ class AttnSession(PylinkEyetrackerSession):
         
         self.small_balances = psyc_stim_list(self.settings['psychophysics']['small_range'], 
                                             self.n_stim, self.settings['small_task']['default_balance'])
-        
+
         if self.settings['operating system'] == 'mac':  # to compensate for macbook retina display
             self.screen = np.array([self.win.size[0], self.win.size[1]]) / 2
         else:
@@ -71,8 +74,8 @@ class AttnSession(PylinkEyetrackerSession):
                                         pacman_angle=self.settings['radial'].get('pacman_angle'), 
                                         n_mask_pixels=self.settings['radial'].get('n_mask_pixels'), 
                                         frequency=self.settings['radial'].get('frequency'),
-                                        eccentricity=self.settings['radial']['annulus_eccentricity'],
-                                        width=self.settings['radial']['annulus_width'])
+                                        outer_radius=self.settings['radial'].get('outer_radius'),
+                                        inner_radius=self.settings['radial'].get('inner_radius'))
 
         self.largeAF = AttSizeStim(self,
                                    n_sections=self.settings['large_task']['n_sections'],
@@ -124,8 +127,8 @@ class AttnSession(PylinkEyetrackerSession):
                                  lineColor=1,
                                  lineWidth=self.settings['fixation stim']['line_width'],
                                  contrast=self.settings['fixation stim']['contrast'],
-                                 start=[-2,-2],
-                                 end=[2,2]
+                                 start=[-self.settings['cue']['L_cue_length'],-self.settings['cue']['L_cue_length']],
+                                 end=[self.settings['cue']['L_cue_length'],self.settings['cue']['L_cue_length']]
                                  )
 
         self.cue_line2 = visual.Line(win=self.win,
@@ -133,32 +136,59 @@ class AttnSession(PylinkEyetrackerSession):
                                  lineColor=1,
                                  lineWidth=self.settings['fixation stim']['line_width'],
                                  contrast=self.settings['fixation stim']['contrast'],
-                                 start=[-2,2],
-                                 end=[2,-2]
+                                 start=[-self.settings['cue']['L_cue_length'],self.settings['cue']['L_cue_length']],
+                                 end=[self.settings['cue']['L_cue_length'],-self.settings['cue']['L_cue_length']]
                                  )
     def create_trials(self):
         """include each trial detail (i.e. trial type, task, cue, stimulus displyed)
         """
+        # count responses separately for each task
+        self.small_responses = -1 * np.ones(self.n_trials) #initialize resposnes with -1 (no response)
+        self.large_low_responses = -1 * np.ones(self.n_trials) 
+        self.large_high_responses = -1 * np.ones(self.n_trials) 
+
+        # attempt staircase implementation
+        self.stairs=[]
+        info={}
+        info['nTrials']=self.n_trials
+        info['observer']='jwp'
+
+        for thisStart in self.settings['staircase']['startPoints']:
+            thisInfo = copy.copy(info)  
+            thisInfo['thisStart']=thisStart
+            thisStair=data.StairHandler(startVal=thisStart,
+                                        extraInfo=thisInfo,
+                                        nTrials=10,
+                                        nUp=self.settings['staircase']['nUp'],
+                                        nDown=self.settings['staircase']['nDown'],
+                                        minVal=self.settings['staircase']['minVal'],
+                                        maxVal=self.settings['staircase']['maxVal'],
+                                        stepSizes=self.settings['staircase']['stepSizes'])
+            self.stairs.append(thisStair)
+        
         for i in range(self.n_trials):
+
             if i in self.settings['attn_task']['blank_trials_pos']:
                 self.trials.append(BlankTrial(session=self,
                                             trial_nr=i,
                                                 ))
                 continue
             else:
+                parameters=dict()
+                parameters['task']=self.settings['trial_types'][str(self.conds[i])]['cue']
+                large_opacity=self.settings['trial_types'][str(self.conds[i])]['large_opacity']
+                mapper_contrast=self.settings['trial_types'][str(self.conds[i])]['mapper_contrast']
+                parameters['large_opacity']=self.settings['trial_types'][f'{large_opacity}_task_opacity']
+                parameters['mapper_contrast']=self.settings['trial_types'][f'{mapper_contrast}_mapper_contrast']
+                parameters['large_balance'] = self.large_balances[i]
+                parameters['small_balance'] = self.small_balances[i]
+
                 self.trials.append(AttnTrial(session=self,
                                             trial_nr=i,
-                                            **self.settings['trial_types'][str(self.conds[i])]
+                                            **self.settings['trial_types'][str(self.conds[i])],
+                                            parameters=parameters
                                             ))
-                
-                # self.trials.append(AttnTrial(session=self,
-                #                             trial_nr=i,
-                #                             cue='S',
-                #                             draw_large=True,
-                #                             large_opacity=1,
-                #                             draw_mapper=True,
-                #                             mapper_contrast=0.8
-                #                             ))
+            
     
     def draw_small_stimulus(self,opacity=1):
         self.stim_nr = self.current_trial.trial_nr
@@ -195,6 +225,8 @@ class AttnSession(PylinkEyetrackerSession):
 
         if self.eyetracker_on:
             self.start_recording_eyetracker()
+        
+        self.responses = []
         
         for trial_idx in range(len(self.trials)):
             self.current_trial = self.trials[trial_idx]
