@@ -45,6 +45,10 @@ class AttnSession(PylinkEyetrackerSession):
         self.stim_per_trial = self.settings['attn_task']['stim_per_trial']
         self.n_stim = self.n_trials * self.stim_per_trial
         self.trials = []
+        self.scanner_sync = self.settings['PRF stimulus settings']['Scanner sync']
+        self.resp_blue=self.settings['attn_task']['resp_keys'][0]
+        self.resp_pink=self.settings['attn_task']['resp_keys'][1]
+
 
         self.large_balances = psyc_stim_list(self.settings['large_task']['color_range'], 
                                             self.n_stim, self.settings['large_task']['default_balance'])
@@ -58,7 +62,7 @@ class AttnSession(PylinkEyetrackerSession):
             self.screen = np.array([self.win.size[0], self.win.size[1]])
 
         #if we are scanning, here I set the mri_trigger manually to the 't'. together with the change in trial.py, this ensures syncing
-        if self.settings['PRF stimulus settings']['Scanner sync']==True:
+        if self.scanner_sync == True:
             self.mri_trigger='t'
 
         if self.settings['PRF stimulus settings']['Screenshot']==True:
@@ -181,7 +185,20 @@ class AttnSession(PylinkEyetrackerSession):
             self.stairs.append(thisStair)
         
         for i in range(self.n_trials):
+            phase_durations = copy.copy(self.settings['attn_task']['phase_durations']) # don't overwrite settings dict
+            
+            # sync to MRI for start blanks so first actual trial is synced to a trigger
+            if (i <= self.settings['attn_task']['start_blanks']) & (self.scanner_sync):
+                phase_durations=[100]
+                sync_trigger=True
+            # sync to MRI trigger every nth trial
+            elif ((i - self.settings['attn_task']['start_blanks'] +1) % self.settings['attn_task']['sync_trial'] == 0) & (i != 0) & (self.scanner_sync):
+                phase_durations[-1]=100 
+                sync_trigger=True
+            else:
+                sync_trigger=False
 
+            print(f'Trial {i}, sync_trigger {sync_trigger}, phase_durations {phase_durations}')
             if self.conds[i]==0:
                 parameters=dict()
                 parameters['task']='blank'
@@ -192,7 +209,8 @@ class AttnSession(PylinkEyetrackerSession):
 
                 self.trials.append(BlankTrial(session=self,
                                             trial_nr=i,
-                                            phase_durations=self.settings['attn_task']['phase_durations'],
+                                            phase_durations=phase_durations,
+                                            sync_trigger=sync_trigger,
                                             parameters=parameters
                                                 ))
                 continue
@@ -209,7 +227,8 @@ class AttnSession(PylinkEyetrackerSession):
                 self.trials.append(AttnTrial(session=self,
                                             trial_nr=i,
                                             **self.settings['trial_types'][str(self.conds[i])],
-                                            phase_durations=self.settings['attn_task']['phase_durations'],
+                                            phase_durations=phase_durations,
+                                            sync_trigger=sync_trigger,
                                             parameters=parameters
                                             ))
             
@@ -257,6 +276,8 @@ class AttnSession(PylinkEyetrackerSession):
             self.current_trial_start_time = self.clock.getTime()
             print(f'Trial {trial_idx}, time {self.current_trial_start_time}')
             self.current_trial.run()
+
+            
         
         print('Total subject responses: %d'%self.total_responses)
         np.save(opj(self.output_dir, self.output_str+'_simple_response_data.npy'), {'Total subject responses':self.total_responses})

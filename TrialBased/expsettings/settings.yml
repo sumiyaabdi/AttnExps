@@ -7,7 +7,7 @@ window:
     size: [1920, 1080] #mac: #[3024, 1964] #
     pos: [0, 0]
     color: [0, 0, 0]
-    fullscr: True
+    fullscr: False
     winType: pyglet
     waitBlanking: True
 
@@ -31,21 +31,22 @@ mri:
     topup_duration: 45 # topup scan duration in seconds (no 't's)
 
     #only relevant for scanning simulations
-    simulate: False #set this to true to simulate a virtual scanner   
+    simulate: True #set this to true to simulate a virtual scanner   
     TA: 1.5  # seconds to acquire one volume
-    volumes: 225  # number of 3D volumes to obtain in a given scanning run
+    volumes: 214  # number of 3D volumes to obtain in a given scanning run
     sync: t  # character used as flag for simulation sync timing, default=‘5’
     skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
     sound: False  # simulate scanner noise
 
 attn_task:
     phase_durations: [0.7,0.6,1,1.3]
+    sync_trial: 5
     stim_per_trial: 1
     signal: 6
     baseline_start: 20 #seconds
     baseline_end: 30 #seconds
-    resp_keys: [1.0, 2.0] # IF USING PSYCHOPHYS BUTTON BOX: [1.0, 2.0]; AT SCANNER ['b', 'y']
-    start_blanks: 0
+    resp_keys: ['1', '2'] # (B, P) IF USING PSYCHOPHYS BUTTON BOX: [1.0, 2.0]; AT SCANNER ['b', 'y']
+    start_blanks: 3
     n_blanks_per_block: 4
     n_blocks: 5
 
@@ -82,7 +83,7 @@ large_task:
     color1: [-0.8, 0.2, 1] 
     color2:  [1, -0.3, 0.7] 
     default_balance: 0.5
-    color_range: [0.1,0.9]
+    color_range: [0.1,0.1] #0-0.49 == pink; 0.51-1 == blue
     jitter: 0.15
     padding: 0 # degrees
 
@@ -95,7 +96,7 @@ small_task:
     color1:  [-0.8, 0.2, 1] 
     color2:  [1, -0.3, 0.7] 
     default_balance: 0.5
-    color_range: [0.661 , 0.339 ]
+    color_range: [0.9, 0.9 ] #0-0.49 == pink; 0.51-1 == blue
 
 radial:
     angular_cycles: 7
@@ -207,14 +208,5 @@ trial_types:
         mapper_contrast: absent
 
 PRF stimulus settings:
-    Scanner sync: False                # set this to true to make bar move on input 't'
+    Scanner sync: True                # set this to true to make bar move on input 't'
     Screenshot: True
-    # Squares in bar: 2
-    # Bar pass steps: 20                # number of steps the bar takes to traverse the aperture
-    # Blanks length: 10                  # length of interbar periods (-1 in orientation). like bar pass steps, in units of TRs or bar step length
-    # Bar orientations: [-1, 0,  225, -1, 90, 315, -1,  180, 45, -1,  270, 135,  -1, -1]
-    # Bar width in degrees: 1.25
-    # Checkers motion speed: 3          # checkers motion speed. direction is randomly up/down at each bar step
-    # Size fixation dot in degrees: 0.05 # dot changes color on average every two TRs (or bar steps)
-    # Bar step length: 1.5                # in seconds. this is only used if Scanner sync is set to False
-    # contrast: 0.5
