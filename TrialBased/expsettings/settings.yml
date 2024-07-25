@@ -38,20 +38,16 @@ mri:
     skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
     sound: False  # simulate scanner noise
 
-psychophysics:
-    task: True
-    bar: False
-    large_range: [0.3,0.7] 
-    small_range: [0.3,0.7] 
-
 attn_task:
+    phase_durations: []
     stim_per_trial: 1
     signal: 6
     baseline_start: 20 #seconds
     baseline_end: 30 #seconds
     resp_keys: [1.0, 2.0] # IF USING PSYCHOPHYS BUTTON BOX: [1.0, 2.0]; AT SCANNER ['b', 'y']
-    n_blanks_per_mini_block: 4
-    n_mini_blocks: 5
+    start_blanks: 0
+    n_blanks_per_block: 4
+    n_blocks: 5
 
 staircase:
     n_small_trials: 9 
@@ -59,9 +55,9 @@ staircase:
     n_large_high_trials: 3
     lb: [0.1,0.9] # max easiness of task
     ub: [0.49,0.51] # max difficulty
-    startPoins: [0.3,0.7]
-    min: 0.01 # same as lb ub but in distance
-    max: 0.9
+    startPoints: [0.3,0.7]
+    minVal: 0.01 # same as lb ub but in distance
+    maxVal: 0.9
     step_size: 0.2
     stepSizes: [0.1,0.05,0.05,0.02,0.02,0.01,0.01]
     nUp: 3
@@ -76,7 +72,7 @@ fixation stim:
 cue:
     duration: 0.5
     color: 1
-    L_cue_length: 0.3
+    lineLength: 0.08
 
 large_task:
     n_sections: 1
@@ -102,20 +98,20 @@ small_task:
     color_range: [0.661 , 0.339 ]
 
 radial:
-    angular_cycles: 17
+    angular_cycles: 7
     angular_res: 60
     radial_cycles: 0
     border_radius: 0.1
     n_mask_pixels: 0
     frequency: 8.0 
-    outer_radius: 2
-    inner_radius: 1.375
+    outer_radius: 1.625
+    inner_radius: 1
 
 trial_types:
     low_task_opacity: 0.2
     high_task_opacity: 0.6
     absent_task_opacity: 0
-    low_mapper_contrast: 0.2
+    low_mapper_contrast: 0.075
     high_mapper_contrast: 0.9
     absent_mapper_contrast: 0
 

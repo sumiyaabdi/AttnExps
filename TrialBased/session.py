@@ -19,7 +19,7 @@ from psychopy.visual import filters
 
 from exptools2.core import Session, PylinkEyetrackerSession
 from trial import BaselineTrial, PRFTrial, PsychophysTrial, AttnTrial, BlankTrial
-from stim import PRFStim, AttSizeStim, FixationStim,cross_fixation,HemiFieldStim
+from stim import PRFStim, AttSizeStim, FixationStim,cross_fixation,HemiFieldStim,cueStim
 from utils import create_stim_list, get_stim_nr,psyc_stim_list
 
 
@@ -36,18 +36,20 @@ class AttnSession(PylinkEyetrackerSession):
                          settings_file=settings_file, 
                          eyetracker_on=eyetracker_on)
 
-        self.n_trials = 100
-        n_conds=np.arange(1,15)
-        n_conds=np.append(n_conds,[0]*self.settings['attn_task']['n_blanks_per_mini_block'])
-        self.conds = np.random.randint(1,15,self.n_trials)
+        n_conds=np.arange(1,15,dtype=int)
+        n_conds=np.append(n_conds,[0]*self.settings['attn_task']['n_blanks_per_block'])
+        self.conds=np.concatenate([rng.permutation(n_conds) for i in range(self.settings['attn_task']['n_blocks'])])
+        self.conds=np.concatenate((np.zeros(self.settings['attn_task']['start_blanks']),self.conds)).astype(int)
+        np.save(opj(self.output_dir, self.output_str+'_trials.npy'),self.conds)
+        self.n_trials = len(self.conds)
         self.stim_per_trial = self.settings['attn_task']['stim_per_trial']
         self.n_stim = self.n_trials * self.stim_per_trial
         self.trials = []
 
-        self.large_balances = psyc_stim_list(self.settings['psychophysics']['large_range'], 
+        self.large_balances = psyc_stim_list(self.settings['large_task']['color_range'], 
                                             self.n_stim, self.settings['large_task']['default_balance'])
         
-        self.small_balances = psyc_stim_list(self.settings['psychophysics']['small_range'], 
+        self.small_balances = psyc_stim_list(self.settings['small_task']['color_range'], 
                                             self.n_stim, self.settings['small_task']['default_balance'])
 
         if self.settings['operating system'] == 'mac':  # to compensate for macbook retina display
@@ -121,29 +123,41 @@ class AttnSession(PylinkEyetrackerSession):
                                  end=[self.screen[1], self.screen[1]]
                                  )
         
-        # create fixation lines
+        # create cue lines
+
+        self.cueStim= cueStim(self,
+                               radius=self.settings['small_task']['radius'],
+                               lineColor=self.settings['cue']['color'],
+                               lineWidth=self.settings['fixation stim']['line_width'],
+                               lineLength=self.settings['cue']['lineLength']
+                               )
+        
         self.cue_line1 = visual.Line(win=self.win,
                                  units="deg",
                                  lineColor=1,
                                  lineWidth=self.settings['fixation stim']['line_width'],
                                  contrast=self.settings['fixation stim']['contrast'],
-                                 start=[-self.settings['cue']['L_cue_length'],-self.settings['cue']['L_cue_length']],
-                                 end=[self.settings['cue']['L_cue_length'],self.settings['cue']['L_cue_length']]
+                                 pos=(0,self.settings['small_task']['radius']),
+                                 start=[self.settings['small_task']['radius'],-self.settings['cue']['lineLength']/2],
+                                 end=[self.settings['small_task']['radius'],self.settings['cue']['lineLength']/2]
                                  )
-
         self.cue_line2 = visual.Line(win=self.win,
                                  units="deg",
                                  lineColor=1,
                                  lineWidth=self.settings['fixation stim']['line_width'],
                                  contrast=self.settings['fixation stim']['contrast'],
-                                 start=[-self.settings['cue']['L_cue_length'],self.settings['cue']['L_cue_length']],
-                                 end=[self.settings['cue']['L_cue_length'],-self.settings['cue']['L_cue_length']]
+                                 pos=(self.settings['small_task']['radius'],0),
+                                 start=[-self.settings['small_task']['radius'],-self.settings['cue']['lineLength']/2],
+                                 end=[-self.settings['small_task']['radius'],self.settings['cue']['lineLength']/2]
                                  )
+        
+
     def create_trials(self):
         """include each trial detail (i.e. trial type, task, cue, stimulus displyed)
         """
         # count responses separately for each task
-        self.small_responses = -1 * np.ones(self.n_trials) #initialize resposnes with -1 (no response)
+        self.small_bgPresent_responses = -1 * np.ones(self.n_trials) #initialize resposnes with -1 (no response)
+        self.small_bgAbsent_responses = -1 * np.ones(self.n_trials) 
         self.large_low_responses = -1 * np.ones(self.n_trials) 
         self.large_high_responses = -1 * np.ones(self.n_trials) 
 
@@ -168,9 +182,17 @@ class AttnSession(PylinkEyetrackerSession):
         
         for i in range(self.n_trials):
 
-            if i in self.settings['attn_task']['blank_trials_pos']:
+            if self.conds[i]==0:
+                parameters=dict()
+                parameters['task']='blank'
+                parameters['large_opacity']= 0
+                parameters['mapper_contrast']= 0
+                parameters['large_balance'] = 0
+                parameters['small_balance'] = 0
+
                 self.trials.append(BlankTrial(session=self,
                                             trial_nr=i,
+                                            parameters=parameters
                                                 ))
                 continue
             else:

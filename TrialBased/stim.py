@@ -19,6 +19,90 @@ def cross_fixation(win, size=0.1, color=(1,1,1), **kwargs):
     """ Creates a fixation cross with sensible defaults. """
     return visual.ShapeStim(win, lineColor=None, fillColor=color, vertices='cross', size=size)
 
+class cueStim():
+    "the lines that indicate which task participatns shoudl be doing"
+
+    def __init__(self,
+                 session,
+                 radius,
+                 lineColor,
+                 lineWidth,
+                 lineLength,
+                 ):
+        
+        self.session = session
+
+        self.cue_cardinal1 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[radius,-lineLength/2],
+                                 end=[radius,lineLength/2]
+                                 )
+        self.cue_cardinal2 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[-radius,-lineLength/2],
+                                 end=[-radius,lineLength/2]
+                                 )
+        self.cue_cardinal3 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[-lineLength/2,radius],
+                                 end=[lineLength/2,radius]
+                                 )
+        self.cue_cardinal4 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[-lineLength/2,-radius],
+                                 end=[lineLength/2,-radius]
+                                 )
+
+        self.cue_diagonal1 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[radius*np.cos(np.pi/4)+np.sqrt((lineLength**2)/8),radius*np.sin(np.pi/4)-np.sqrt((lineLength**2)/8)],
+                                 end=[radius*np.cos(np.pi/4)-np.sqrt((lineLength**2)/8),radius*np.sin(np.pi/4)+np.sqrt((lineLength**2)/8)]
+                                 )        
+        self.cue_diagonal2 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[-radius*np.cos(np.pi/4)-np.sqrt((lineLength**2)/8),radius*np.sin(np.pi/4)-np.sqrt((lineLength**2)/8)],
+                                 end=[-radius*np.cos(np.pi/4)+np.sqrt((lineLength**2)/8),radius*np.sin(np.pi/4)+np.sqrt((lineLength**2)/8)]
+                                 )
+        self.cue_diagonal3 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[-radius*np.cos(np.pi/4)+np.sqrt((lineLength**2)/8),-radius*np.sin(np.pi/4)-np.sqrt((lineLength**2)/8)],
+                                 end=[-radius*np.cos(np.pi/4)-np.sqrt((lineLength**2)/8),-radius*np.sin(np.pi/4)+np.sqrt((lineLength**2)/8)]
+                                 )
+        self.cue_diagonal4 = visual.Line(win=self.session.win,
+                                 units="deg",
+                                 lineColor=lineColor,
+                                 lineWidth=lineWidth,
+                                 start=[radius*np.cos(np.pi/4)-np.sqrt((lineLength**2)/8),-radius*np.sin(np.pi/4)-np.sqrt((lineLength**2)/8)],
+                                 end=[radius*np.cos(np.pi/4)+np.sqrt((lineLength**2)/8),-radius*np.sin(np.pi/4)+np.sqrt((lineLength**2)/8)]
+                                 )
+
+    def draw_cardinal(self):
+        self.cue_cardinal1.draw()
+        self.cue_cardinal2.draw()
+        self.cue_cardinal3.draw()
+        self.cue_cardinal4.draw()
+
+    def draw_diagonal(self):
+        self.cue_diagonal1.draw()
+        self.cue_diagonal2.draw()
+        self.cue_diagonal3.draw()
+        self.cue_diagonal4.draw()
+
+
 class FixationStim():
     """
     Small attention field task. Creates fixation color discrimination task, participant responds
