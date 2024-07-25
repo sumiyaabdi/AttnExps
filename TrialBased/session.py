@@ -18,7 +18,7 @@ from psychopy import visual, tools, data
 from psychopy.visual import filters
 
 from exptools2.core import Session, PylinkEyetrackerSession
-from trial import BaselineTrial, PRFTrial, PsychophysTrial, AttnTrial, BlankTrial
+from trial import AttnTrial, BlankTrial
 from stim import PRFStim, AttSizeStim, FixationStim,cross_fixation,HemiFieldStim,cueStim
 from utils import create_stim_list, get_stim_nr,psyc_stim_list
 
@@ -192,6 +192,7 @@ class AttnSession(PylinkEyetrackerSession):
 
                 self.trials.append(BlankTrial(session=self,
                                             trial_nr=i,
+                                            phase_durations=self.settings['attn_task']['phase_durations'],
                                             parameters=parameters
                                                 ))
                 continue
@@ -208,6 +209,7 @@ class AttnSession(PylinkEyetrackerSession):
                 self.trials.append(AttnTrial(session=self,
                                             trial_nr=i,
                                             **self.settings['trial_types'][str(self.conds[i])],
+                                            phase_durations=self.settings['attn_task']['phase_durations'],
                                             parameters=parameters
                                             ))
             

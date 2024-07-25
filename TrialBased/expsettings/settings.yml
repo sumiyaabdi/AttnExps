@@ -39,7 +39,7 @@ mri:
     sound: False  # simulate scanner noise
 
 attn_task:
-    phase_durations: []
+    phase_durations: [0.7,0.6,1,1.3]
     stim_per_trial: 1
     signal: 6
     baseline_start: 20 #seconds
