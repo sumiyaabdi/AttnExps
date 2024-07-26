@@ -45,11 +45,13 @@ class AttnTrial(Trial):
 
         if self.phase == 0:
             if self.cue.upper() == 'S':
+                print('s cue')
                 self.session.cueStim.draw_cardinal()
                 # self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'),
                 #                              lineColor=self.session.settings['cue']['color'],
                 #                              lineWidth=self.session.settings['fixation stim']['line_width'])
             elif self.cue.upper() == 'L':
+                print('s cue')
                 self.session.cueStim.draw_diagonal()
                 # self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
                 # self.session.cue_line1.draw()
@@ -69,7 +71,12 @@ class AttnTrial(Trial):
         events = event.getKeys(timeStamped=self.session.clock)
         if events:
             if 'q' in [ev[0] for ev in events]:  # specific key in settings?
+
+                #saves in the event of a quit
                 np.save(opj(self.session.output_dir, self.session.output_str+'_trials.npy'),self.session.conds)
+                for k,v in self.session.responses.items():
+                    np.save(opj(self.session.output_dir, self.session.output_str+f'_responses_{k}.npy'),v)
+
                 self.session.close()
                 self.session.quit()
 
@@ -105,7 +112,9 @@ class AttnTrial(Trial):
                 if key != self.session.mri_trigger:
                     self.last_resp = key
                     self.last_resp_onset = t
-                    self.session.global_log.loc[idx, 'correct'] = self.check_correct(key)
+
+                    # append response (correct / incorrect) to specific trial type
+                    self.session.responses[self.parameters['response_type']][self.trial_nr] = self.check_correct(key)
         return events
     
     def check_correct(self, response):
@@ -121,9 +130,9 @@ class AttnTrial(Trial):
             correct_response=None
 
         if response == correct_response:
-            return True
+            return 1
         else:  
-            return False
+            return 0
 
 
 class BlankTrial(AttnTrial):

@@ -7,6 +7,7 @@ Created on Mon Feb 25 14:05:10 2019
 """
 
 import numpy as np
+import pickle
 rng=np.random.default_rng(2024)
 np.random.seed(2024)
 import os
@@ -159,36 +160,12 @@ class AttnSession(PylinkEyetrackerSession):
     def create_trials(self):
         """include each trial detail (i.e. trial type, task, cue, stimulus displyed)
         """
-        # count responses separately for each task
-        self.small_bgPresent_responses = -1 * np.ones(self.n_trials) #initialize resposnes with -1 (no response)
-        self.small_bgAbsent_responses = -1 * np.ones(self.n_trials) 
-        self.large_low_responses = -1 * np.ones(self.n_trials) 
-        self.large_high_responses = -1 * np.ones(self.n_trials) 
-
-        # attempt staircase implementation
-        self.stairs=[]
-        info={}
-        info['nTrials']=self.n_trials
-        info['observer']='jwp'
-
-        for thisStart in self.settings['staircase']['startPoints']:
-            thisInfo = copy.copy(info)  
-            thisInfo['thisStart']=thisStart
-            thisStair=data.StairHandler(startVal=thisStart,
-                                        extraInfo=thisInfo,
-                                        nTrials=10,
-                                        nUp=self.settings['staircase']['nUp'],
-                                        nDown=self.settings['staircase']['nDown'],
-                                        minVal=self.settings['staircase']['minVal'],
-                                        maxVal=self.settings['staircase']['maxVal'],
-                                        stepSizes=self.settings['staircase']['stepSizes'])
-            self.stairs.append(thisStair)
-        
+      
         for i in range(self.n_trials):
             phase_durations = copy.copy(self.settings['attn_task']['phase_durations']) # don't overwrite settings dict
             
             # sync to MRI for start blanks so first actual trial is synced to a trigger
-            if (i <= self.settings['attn_task']['start_blanks']) & (self.scanner_sync):
+            if (i < self.settings['attn_task']['start_blanks']) & (self.scanner_sync):
                 phase_durations=[100]
                 sync_trigger=True
             # sync to MRI trigger every nth trial
@@ -198,7 +175,6 @@ class AttnSession(PylinkEyetrackerSession):
             else:
                 sync_trigger=False
 
-            print(f'Trial {i}, sync_trigger {sync_trigger}, phase_durations {phase_durations}')
             if self.conds[i]==0:
                 parameters=dict()
                 parameters['task']='blank'
@@ -215,6 +191,8 @@ class AttnSession(PylinkEyetrackerSession):
                                                 ))
                 continue
             else:
+
+                # paramaters to describe each trial
                 parameters=dict()
                 parameters['task']=self.settings['trial_types'][str(self.conds[i])]['cue']
                 large_opacity=self.settings['trial_types'][str(self.conds[i])]['large_opacity']
@@ -223,6 +201,18 @@ class AttnSession(PylinkEyetrackerSession):
                 parameters['mapper_contrast']=self.settings['trial_types'][f'{mapper_contrast}_mapper_contrast']
                 parameters['large_balance'] = self.large_balances[i]
                 parameters['small_balance'] = self.small_balances[i]
+                
+                # count responses separately for each task
+                self.responses={}
+                for task in ['small', 'large']:
+                    if task == 'large':
+                        for opacity in ['low','high']:
+                            parameters['response_type'] = f'{task}_{opacity}'
+                            self.responses[f'{task}_{opacity}'] = -1 * np.ones(self.n_trials)
+                    if task == 'small':
+                        for bg in ['bgPresent','bgAbsent']:
+                            parameters['response_type'] = f'{task}_{bg}'
+                            self.responses[f'{task}_{bg}'] = -1 * np.ones(self.n_trials)
 
                 self.trials.append(AttnTrial(session=self,
                                             trial_nr=i,
@@ -233,16 +223,18 @@ class AttnSession(PylinkEyetrackerSession):
                                             ))
             
     
-    def draw_small_stimulus(self,opacity=1):
+    def draw_small_stimulus(self,balance=None,opacity=1):
         self.stim_nr = self.current_trial.trial_nr
+        if not balance:
+            balance = self.small_balances[self.stim_nr]
+
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
-        self.smallAF.draw(self.small_balances[self.stim_nr], self.stim_nr,opacity)
+        self.smallAF.draw(balance, self.stim_nr,opacity)
     
-    def draw_large_stimulus(self,opacity=1):
-        self.stim_nr = self.current_trial.trial_nr
-        # self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
-        self.largeAF.draw(self.large_balances[self.stim_nr], self.stim_nr,opacity)
-        # self.smallAF.draw(self.small_balances[self.stim_nr], self.stim_nr)
+    def draw_large_stimulus(self,balance=None,opacity=1):
+        if not balance:
+            balance = self.large_balances[self.stim_nr]
+        self.largeAF.draw(balance, self.stim_nr,opacity)
 
     def draw_mapper(self,contrast=1):
         self.hemistim.draw(contrast)
@@ -269,19 +261,36 @@ class AttnSession(PylinkEyetrackerSession):
         if self.eyetracker_on:
             self.start_recording_eyetracker()
         
-        self.responses = []
+        # self.responses = []
+
+        # # attempt staircase implementation
+        # self.stairs=[]
+        # info={}
+        # info['nTrials']=self.n_trials
+        # info['observer']='jwp'
+
+        # for thisStart in self.settings['staircase']['startPoints']:
+        #     thisInfo = copy.copy(info)  
+        #     thisInfo['thisStart']=thisStart
+        #     thisStair=data.StairHandler(startVal=thisStart,
+        #                                 extraInfo=thisInfo,
+        #                                 nTrials=10,
+        #                                 nUp=self.settings['staircase']['nUp'],
+        #                                 nDown=self.settings['staircase']['nDown'],
+        #                                 minVal=self.settings['staircase']['minVal'],
+        #                                 maxVal=self.settings['staircase']['maxVal'],
+        #                                 stepSizes=self.settings['staircase']['stepSizes'])
+        #     self.stairs.append(thisStair)
         
         for trial_idx in range(len(self.trials)):
             self.current_trial = self.trials[trial_idx]
             self.current_trial_start_time = self.clock.getTime()
             print(f'Trial {trial_idx}, time {self.current_trial_start_time}')
-            self.current_trial.run()
-
-            
+            self.current_trial.run()      
         
-        print('Total subject responses: %d'%self.total_responses)
-        np.save(opj(self.output_dir, self.output_str+'_simple_response_data.npy'), {'Total subject responses':self.total_responses})
-        
+        np.save(opj(self.output_dir, self.output_str+'_trials.npy'),self.conds)
+        with open(opj(self.output_dir, self.output_str+'_responses.npy'), 'wb') as f:
+            pickle.dump(self.responses, f)
         
         if self.settings['PRF stimulus settings']['Screenshot']==True:
             self.win.saveMovieFrames(opj(self.screen_dir, self.output_str+'_Screenshot.png'))
