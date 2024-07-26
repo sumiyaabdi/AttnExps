@@ -160,7 +160,20 @@ class AttnSession(PylinkEyetrackerSession):
     def create_trials(self):
         """include each trial detail (i.e. trial type, task, cue, stimulus displyed)
         """
-      
+
+        self.responses={}
+        self.responses['blank'] = -1 * np.ones(self.n_trials)
+
+        unique_responses= []
+        for k,v in self.settings['trial_types'].items():
+            try:
+                int(k)
+            except ValueError:
+                continue
+
+            if v['response_type'] not in unique_responses:
+                self.responses[v['response_type']] = -1 * np.ones(self.n_trials)
+
         for i in range(self.n_trials):
             phase_durations = copy.copy(self.settings['attn_task']['phase_durations']) # don't overwrite settings dict
             
@@ -182,7 +195,8 @@ class AttnSession(PylinkEyetrackerSession):
                 parameters['mapper_contrast']= 0
                 parameters['large_balance'] = 0
                 parameters['small_balance'] = 0
-
+                parameters['response_type'] = 'blank'
+            
                 self.trials.append(BlankTrial(session=self,
                                             trial_nr=i,
                                             phase_durations=phase_durations,
@@ -201,22 +215,21 @@ class AttnSession(PylinkEyetrackerSession):
                 parameters['mapper_contrast']=self.settings['trial_types'][f'{mapper_contrast}_mapper_contrast']
                 parameters['large_balance'] = self.large_balances[i]
                 parameters['small_balance'] = self.small_balances[i]
+                parameters['response_type'] = self.settings['trial_types'][str(self.conds[i])]['response_type']
                 
-                # count responses separately for each task
-                self.responses={}
-                for task in ['small', 'large']:
-                    if task == 'large':
-                        for opacity in ['low','high']:
-                            parameters['response_type'] = f'{task}_{opacity}'
-                            self.responses[f'{task}_{opacity}'] = -1 * np.ones(self.n_trials)
-                    if task == 'small':
-                        for bg in ['bgPresent','bgAbsent']:
-                            parameters['response_type'] = f'{task}_{bg}'
-                            self.responses[f'{task}_{bg}'] = -1 * np.ones(self.n_trials)
+                # # count responses separately for each task
+                # for task in ['small', 'large']:
+                #     if task == 'large':
+                #         for opacity in ['low','high']:
+                #             parameters['response_type'] = f'{task}_{opacity}'
+                #             self.responses[f'{task}_{opacity}'] = -1 * np.ones(self.n_trials)
+                #     if task == 'small':
+                #         for bg in ['bgPresent','bgAbsent']:
+                #             parameters['response_type'] = f'{task}_{bg}'
+                #             self.responses[f'{task}_{bg}'] = -1 * np.ones(self.n_trials)
 
                 self.trials.append(AttnTrial(session=self,
                                             trial_nr=i,
-                                            **self.settings['trial_types'][str(self.conds[i])],
                                             phase_durations=phase_durations,
                                             sync_trigger=sync_trigger,
                                             parameters=parameters
@@ -232,6 +245,7 @@ class AttnSession(PylinkEyetrackerSession):
         self.smallAF.draw(balance, self.stim_nr,opacity)
     
     def draw_large_stimulus(self,balance=None,opacity=1):
+        self.stim_nr = self.current_trial.trial_nr
         if not balance:
             balance = self.large_balances[self.stim_nr]
         self.largeAF.draw(balance, self.stim_nr,opacity)

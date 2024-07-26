@@ -10,6 +10,7 @@ from exptools2.core.trial import Trial
 from psychopy import event
 from utils import get_stim_nr
 import numpy as np
+import pickle
 import os
 
 opj = os.path.join
@@ -30,7 +31,7 @@ class AttnTrial(Trial):
 
         super().__init__(session, trial_nr, phase_durations=phase_durations, *args, **kwargs)
 
-        self.cue=cue
+        self.cue=parameters['task']
         self.draw_large=draw_large
         self.draw_mapper=draw_mapper
         self.parameters = parameters
@@ -47,15 +48,9 @@ class AttnTrial(Trial):
             if self.cue.upper() == 'S':
                 print('s cue')
                 self.session.cueStim.draw_cardinal()
-                # self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'),
-                #                              lineColor=self.session.settings['cue']['color'],
-                #                              lineWidth=self.session.settings['fixation stim']['line_width'])
             elif self.cue.upper() == 'L':
                 print('s cue')
                 self.session.cueStim.draw_diagonal()
-                # self.session.fix_circle.draw(0, radius=self.session.settings['small_task'].get('radius'))
-                # self.session.cue_line1.draw()
-                # self.session.cue_line2.draw()
 
         elif (self.phase % 2 == 0):
             self.session.win.getMovieFrame()
@@ -74,8 +69,8 @@ class AttnTrial(Trial):
 
                 #saves in the event of a quit
                 np.save(opj(self.session.output_dir, self.session.output_str+'_trials.npy'),self.session.conds)
-                for k,v in self.session.responses.items():
-                    np.save(opj(self.session.output_dir, self.session.output_str+f'_responses_{k}.npy'),v)
+                with open(opj(self.session.output_dir, self.session.output_str+'_responses.npy'), 'wb') as f:
+                    pickle.dump(self.session.responses, f)
 
                 self.session.close()
                 self.session.quit()
@@ -113,8 +108,10 @@ class AttnTrial(Trial):
                     self.last_resp = key
                     self.last_resp_onset = t
 
-                    # append response (correct / incorrect) to specific trial type
-                    self.session.responses[self.parameters['response_type']][self.trial_nr] = self.check_correct(key)
+                    # append response (correct / incorrect) to specific trial type on if resp appears after stimulus does
+                    if self.session.clock.getTime() > (self.start_trial + self.phase_durations[0]+self.phase_durations[1]):
+                        self.session.responses[self.parameters['response_type']][self.trial_nr] = self.check_correct(key)
+                    # self.session.responses[self.parameters['response_type']][self.trial_nr] = self.check_correct(key)
         return events
     
     def check_correct(self, response):

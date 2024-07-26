@@ -1,6 +1,12 @@
 import numpy as np
+import yaml
 from scipy.stats import norm
 Z = norm.ppf
+
+def load_yaml(file_name):
+    with open(file_name, 'r') as file:
+        settings=yaml.safe_load(file)
+    return settings
 
 def psyc_stim_list(stim_range, n_stim, baseline):
     " Creates stim list for psychophysics task"
