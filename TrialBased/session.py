@@ -20,7 +20,7 @@ from psychopy.visual import filters
 
 from exptools2.core import Session, PylinkEyetrackerSession
 from trial import AttnTrial, BlankTrial
-from stim import PRFStim, AttSizeStim, FixationStim,cross_fixation,HemiFieldStim,cueStim
+from stim import AttSizeStim, FixationStim,cross_fixation,HemiFieldStim,cueStim
 from utils import create_stim_list, get_stim_nr,psyc_stim_list
 
 
@@ -37,10 +37,12 @@ class AttnSession(PylinkEyetrackerSession):
                          settings_file=settings_file, 
                          eyetracker_on=eyetracker_on)
 
-        n_conds=np.arange(1,15,dtype=int)
-        n_conds=np.append(n_conds,[0]*self.settings['attn_task']['n_blanks_per_block'])
-        self.conds=np.concatenate([rng.permutation(n_conds) for i in range(self.settings['attn_task']['n_blocks'])])
-        self.conds=np.concatenate((np.zeros(self.settings['attn_task']['start_blanks']),self.conds)).astype(int)
+        n_conds=np.arange(1,16,dtype=int)
+        n_conds=np.append(n_conds,[0]*self.settings['attn_task']['n_blanks_per_block']) # add blanks
+        n_conds=np.append(n_conds,self.settings['trial_types']['low_contrast_ids']) # add an extra repetition for every low-contrast run
+        self.conds=np.concatenate([rng.permutation(n_conds) for i in range(self.settings['attn_task']['n_blocks'])]) # randomize and repeat
+        self.conds=np.concatenate((np.zeros(self.settings['attn_task']['start_blanks']),self.conds)).astype(int) # add start_blanks
+        self.conds=np.concatenate((self.conds,np.zeros(self.settings['attn_task']['end_blanks']))).astype(int) # add end
         np.save(opj(self.output_dir, self.output_str+'_trials.npy'),self.conds)
         self.n_trials = len(self.conds)
         self.stim_per_trial = self.settings['attn_task']['stim_per_trial']
@@ -157,6 +159,36 @@ class AttnSession(PylinkEyetrackerSession):
                                  )
         
 
+    def create_staircase(self):
+        """set up multi condition staircase
+        """
+        stair_info= {}
+        conditions=[]
+        
+        for k,v in self.settings['staircase']['info'].items():
+            stair_info[k]=v
+
+        # for behType in self.responses.keys():
+        #     info=copy.copy(stair_info)
+        #     info['label'] = behType
+        #     conditions.append(info)
+        
+        # self.stairs=data.MultiStairHandler(conditions=conditions)
+        # i=0
+        # for thisIntensity, thisStair in self.stairs:
+        #     i+=1
+            # print('Staircase: ', i, ' ', thisStair)
+
+        # single stair handler 
+        # for behType in self.responses.keys():
+        self.stairs=data.StairHandler(startVal=stair_info['startVal'],
+                                                minVal=stair_info['minVal'],
+                                                maxVal=stair_info['maxVal'],
+                                                stepSizes=stair_info['stepSizes'],
+                                                nUp=stair_info['nUp'],
+                                                nDown=stair_info['nDown'],
+                                                name='small_present')
+
     def create_trials(self):
         """include each trial detail (i.e. trial type, task, cue, stimulus displyed)
         """
@@ -170,24 +202,30 @@ class AttnSession(PylinkEyetrackerSession):
                 int(k)
             except ValueError:
                 continue
-
-            if v['response_type'] not in unique_responses:
-                self.responses[v['response_type']] = -1 * np.ones(self.n_trials)
+            
+            response_type=self.settings['trial_types']['response_types'][v['response_type_id']]
+            if response_type not in unique_responses:
+                self.responses[response_type] = -1 * np.ones(self.n_trials)
 
         for i in range(self.n_trials):
             phase_durations = copy.copy(self.settings['attn_task']['phase_durations']) # don't overwrite settings dict
             
-            # sync to MRI for start blanks so first actual trial is synced to a trigger
+            # sync start blanks to MRI 
             if (i < self.settings['attn_task']['start_blanks']) & (self.scanner_sync):
                 phase_durations=[100]
                 sync_trigger=True
-            # sync to MRI trigger every nth trial
+            # sync end blanks to MRI 
+            elif (i >= self.n_trials - self.settings['attn_task']['end_blanks']) & (self.scanner_sync):
+                phase_durations=[100]
+                sync_trigger=True
+            # sync to MRI trigger first attn trial and every nth trial
             elif ((i - self.settings['attn_task']['start_blanks'] +1) % self.settings['attn_task']['sync_trial'] == 0) & (i != 0) & (self.scanner_sync):
                 phase_durations[-1]=100 
                 sync_trigger=True
             else:
                 sync_trigger=False
 
+            # treat blank trials a bit differently
             if self.conds[i]==0:
                 parameters=dict()
                 parameters['task']='blank'
@@ -205,7 +243,6 @@ class AttnSession(PylinkEyetrackerSession):
                                                 ))
                 continue
             else:
-
                 # paramaters to describe each trial
                 parameters=dict()
                 parameters['task']=self.settings['trial_types'][str(self.conds[i])]['cue']
@@ -215,18 +252,7 @@ class AttnSession(PylinkEyetrackerSession):
                 parameters['mapper_contrast']=self.settings['trial_types'][f'{mapper_contrast}_mapper_contrast']
                 parameters['large_balance'] = self.large_balances[i]
                 parameters['small_balance'] = self.small_balances[i]
-                parameters['response_type'] = self.settings['trial_types'][str(self.conds[i])]['response_type']
-                
-                # # count responses separately for each task
-                # for task in ['small', 'large']:
-                #     if task == 'large':
-                #         for opacity in ['low','high']:
-                #             parameters['response_type'] = f'{task}_{opacity}'
-                #             self.responses[f'{task}_{opacity}'] = -1 * np.ones(self.n_trials)
-                #     if task == 'small':
-                #         for bg in ['bgPresent','bgAbsent']:
-                #             parameters['response_type'] = f'{task}_{bg}'
-                #             self.responses[f'{task}_{bg}'] = -1 * np.ones(self.n_trials)
+                parameters['response_type'] = self.settings['trial_types']['response_types'][self.settings['trial_types'][str(self.conds[i])]['response_type_id']]
 
                 self.trials.append(AttnTrial(session=self,
                                             trial_nr=i,
@@ -275,32 +301,23 @@ class AttnSession(PylinkEyetrackerSession):
         if self.eyetracker_on:
             self.start_recording_eyetracker()
         
-        # self.responses = []
-
-        # # attempt staircase implementation
-        # self.stairs=[]
-        # info={}
-        # info['nTrials']=self.n_trials
-        # info['observer']='jwp'
-
-        # for thisStart in self.settings['staircase']['startPoints']:
-        #     thisInfo = copy.copy(info)  
-        #     thisInfo['thisStart']=thisStart
-        #     thisStair=data.StairHandler(startVal=thisStart,
-        #                                 extraInfo=thisInfo,
-        #                                 nTrials=10,
-        #                                 nUp=self.settings['staircase']['nUp'],
-        #                                 nDown=self.settings['staircase']['nDown'],
-        #                                 minVal=self.settings['staircase']['minVal'],
-        #                                 maxVal=self.settings['staircase']['maxVal'],
-        #                                 stepSizes=self.settings['staircase']['stepSizes'])
-        #     self.stairs.append(thisStair)
-        
         for trial_idx in range(len(self.trials)):
             self.current_trial = self.trials[trial_idx]
+            behType=self.current_trial.parameters['response_type']
             self.current_trial_start_time = self.clock.getTime()
             print(f'Trial {trial_idx}, time {self.current_trial_start_time}')
             self.current_trial.run()      
+            
+            if self.conds[trial_idx] != 0:
+                resp=self.responses[behType][self.current_trial.trial_nr]
+                resp=0 if resp == -1 else resp # change no response to incorrect 
+
+                print('This intensity: ', self.stairs.intensity)
+                print('resp ', resp)
+                self.stairs.intensities.append(self.stairs.intensity)
+                self.stairs.addResponse(resp,intensity=self.stairs.intensity)
+                print('Next intensity: ', self.stairs.intensity)
+                print('Intensities: ', self.stairs.intensities)
         
         np.save(opj(self.output_dir, self.output_str+'_trials.npy'),self.conds)
         with open(opj(self.output_dir, self.output_str+'_responses.npy'), 'wb') as f:

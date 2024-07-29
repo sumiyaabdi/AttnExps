@@ -39,30 +39,25 @@ mri:
     sound: False  # simulate scanner noise
 
 attn_task:
-    phase_durations: [0.7,0.6,1,1.3]
-    sync_trial: 5
+    phase_durations: [0.6,0.4,1,1]
+    sync_trial: 1
     stim_per_trial: 1
-    signal: 6
-    baseline_start: 20 #seconds
-    baseline_end: 30 #seconds
-    resp_keys: ['1', '2'] # (B, P) IF USING PSYCHOPHYS BUTTON BOX: [1.0, 2.0]; AT SCANNER ['b', 'y']
-    start_blanks: 3
+    resp_keys: ['1', '2'] # (Blue, Pink) IF USING PSYCHOPHYS BUTTON BOX: [1.0, 2.0]; AT SCANNER ['b', 'y']
+    start_blanks: 3 #in TRs 12s #16s end
+    end_blanks: 3 # in TRs 12s #16s end
     n_blanks_per_block: 4
-    n_blocks: 5
+    n_blocks: 4
 
 staircase:
-    n_small_trials: 9 
-    n_large_low_trials: 3
-    n_large_high_trials: 3
-    lb: [0.1,0.9] # max easiness of task
+    lb: [0.15,0.85] # max easiness of task
     ub: [0.49,0.51] # max difficulty
-    startPoints: [0.3,0.7]
-    minVal: 0.01 # same as lb ub but in distance
-    maxVal: 0.9
-    step_size: 0.2
-    stepSizes: [0.1,0.05,0.05,0.02,0.02,0.01,0.01]
-    nUp: 3
-    nDown: 1
+    info:
+        startVal: 0.45
+        minVal: 0.01 # same as lb ub but in distance
+        maxVal: 0.9
+        stepSizes: 0.1 #[0.1,0.05,0.05,0.02,0.02,0.01,0.01]
+        nUp: 2
+        nDown: 1
 
 fixation stim:
   line_color: black
@@ -115,6 +110,8 @@ trial_types:
     low_mapper_contrast: 0.075
     high_mapper_contrast: 0.9
     absent_mapper_contrast: 0
+    low_contrast_ids: [1, 3, 5, 7, 9] #used to double the number of these trials
+    response_types: ['small_present', 'small_absent', 'large_low', 'large_high']
 
     '1':
         cue: 's'
@@ -122,84 +119,84 @@ trial_types:
         large_opacity: low
         draw_mapper: True
         mapper_contrast: low
-        response_type: small_present
+        response_type_id: 0
     '2':
         cue: 's'
         draw_large: True
         large_opacity: low
         draw_mapper: True
         mapper_contrast: high
-        response_type: small_present
+        response_type_id: 0
     '3':
         cue: 's'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: low
-        response_type: small_present
+        response_type_id: 0
     '4':
         cue: 's'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: high
-        response_type: small_present
+        response_type_id: 0
     '5':
         cue: 's'
         draw_large: False
         large_opacity: absent
         draw_mapper: True
         mapper_contrast: low
-        response_type: small_absent
+        response_type_id: 1
     '6':
         cue: 's'
         draw_large: False
         large_opacity: absent
         draw_mapper: True
         mapper_contrast: high
-        response_type: small_absent
+        response_type_id: 1
     '7':
         cue: 'l'
         draw_large: True
         large_opacity: low
         draw_mapper: True
         mapper_contrast: low
-        response_type: large_low
+        response_type_id: 2
     '8':
         cue: 'l'
         draw_large: True
         large_opacity: low
         draw_mapper: True
         mapper_contrast: high
-        response_type: large_low
+        response_type_id: 2
     '9':
         cue: 'l'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: low
-        response_type: large_high
+        response_type_id: 3
     '10':
         cue: 'l'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: high
-        response_type: large_high
+        response_type_id: 3
     '11':
         cue: 's'
         draw_large: True
         large_opacity: low
         draw_mapper: False
         mapper_contrast: absent
-        response_type: small_present
+        response_type_id: 0
     '12':
         cue: 's'
         draw_large: True
         large_opacity: high
         draw_mapper: False
         mapper_contrast: absent
-        response_type: small_present
+        response_type_id: 0
 
     '13':
         cue: 's'
@@ -207,21 +204,21 @@ trial_types:
         large_opacity: absent
         draw_mapper: False
         mapper_contrast: absent
-        response_type: small_absent
+        response_type_id: 1
     '14':
         cue: 'l'
         draw_large: True
         large_opacity: low
         draw_mapper: False
         mapper_contrast: absent
-        response_type: large_low
+        response_type_id: 2
     '15':
         cue: 'l'
         draw_large: True
         large_opacity: high
         draw_mapper: False
         mapper_contrast: absent
-        response_type: large_high
+        response_type_id: 3
 
 PRF stimulus settings:
     Scanner sync: True                # set this to true to make bar move on input 't'

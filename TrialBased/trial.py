@@ -46,10 +46,8 @@ class AttnTrial(Trial):
 
         if self.phase == 0:
             if self.cue.upper() == 'S':
-                print('s cue')
                 self.session.cueStim.draw_cardinal()
             elif self.cue.upper() == 'L':
-                print('s cue')
                 self.session.cueStim.draw_diagonal()
 
         elif (self.phase % 2 == 0):
@@ -71,6 +69,8 @@ class AttnTrial(Trial):
                 np.save(opj(self.session.output_dir, self.session.output_str+'_trials.npy'),self.session.conds)
                 with open(opj(self.session.output_dir, self.session.output_str+'_responses.npy'), 'wb') as f:
                     pickle.dump(self.session.responses, f)
+                # for k,v in self.session.stairs:
+                    # np.save(opj(self.session.output_dir, self.session.output_str+f'_stair_{k}.json'),v)
 
                 self.session.close()
                 self.session.quit()
@@ -109,7 +109,9 @@ class AttnTrial(Trial):
                     self.last_resp_onset = t
 
                     # append response (correct / incorrect) to specific trial type on if resp appears after stimulus does
-                    if self.session.clock.getTime() > (self.start_trial + self.phase_durations[0]+self.phase_durations[1]):
+                    if self.parameters['response_type'] == 'blank':
+                        pass
+                    elif self.session.clock.getTime() > (self.start_trial + self.phase_durations[0]+self.phase_durations[1]):
                         self.session.responses[self.parameters['response_type']][self.trial_nr] = self.check_correct(key)
                     # self.session.responses[self.parameters['response_type']][self.trial_nr] = self.check_correct(key)
         return events

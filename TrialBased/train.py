@@ -10,8 +10,9 @@ import yaml
 from session import AttnSession
 from analyse import *
 from datetime import datetime
+import psychopy
 
-
+print(psychopy.__version__)
 
 datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -60,6 +61,7 @@ def main():
 
     ts.create_stimuli()
     ts.create_trials()
+    ts.create_staircase()
     ts.run()
 
     return output_str, task, attn, subject,name
