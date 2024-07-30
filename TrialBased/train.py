@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb 25 14:04:44 2019
 
-@author: marcoaqil
+@author: sumiyaabid
 """
 import sys
 import yaml
@@ -46,13 +45,18 @@ def main():
     settings_file=f'expsettings/settings.yml'
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
-    
-    # print color range for task
-    if attn == 's' and task == 'yesno':
-        print(f"\nColor Range: {settings['small_task']['color_range']}")
-    elif attn == 'l' and task == 'yesno':
-        print(f"\nColor Range: {settings['large_task']['color_range']}")
 
+    # use startVal from last run if possible
+    last_outstr=output_str[:-1]+str(int(output_str[-1])-1)
+    last_outdir=f'./logs/{subject}/{last_outstr}_Logs'
+    try:
+        last_tb=AnalyseTrialBased(last_outstr)
+        last_tb.load_stairs()
+        startVal=np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean()
+        print(f'Using last run to start staircase, startVal = {startVal}')
+        settings['staircase']['startVal']=startVal
+    except FileNotFoundError:
+        print('No previous staircase found. Starting from scratch.')
 
     ts = AttnSession(output_str=output_str,
                         output_dir=output_dir,
@@ -64,15 +68,17 @@ def main():
     ts.create_staircase()
     ts.run()
 
-    return output_str, task, attn, subject,name
+    return output_str 
 
 
 if __name__ == '__main__':
-    output_str, task, attn,subject,name = main()
-    beh = AnalyseRun(output_str, task, attn,subject,name)
+    output_str = main()
+    tb=AnalyseTrialBased(output_str)
+    tb.load_stairs()
+    tb.plot_stairs()
 
-    if task == '2afc':
-        beh.analyse2afc()
-        # beh.plot2afc()
-    elif task == 'yesno':
-        beh.analyseYesNo()
+    # if task == '2afc':
+    #     beh.analyse2afc()
+    #     # beh.plot2afc()
+    # elif task == 'yesno':
+    #     beh.analyseYesNo()

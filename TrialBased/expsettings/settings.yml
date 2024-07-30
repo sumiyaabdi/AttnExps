@@ -43,21 +43,24 @@ attn_task:
     sync_trial: 1
     stim_per_trial: 1
     resp_keys: ['1', '2'] # (Blue, Pink) IF USING PSYCHOPHYS BUTTON BOX: [1.0, 2.0]; AT SCANNER ['b', 'y']
-    start_blanks: 3 #in TRs 12s #16s end
-    end_blanks: 3 # in TRs 12s #16s end
+    start_blanks: 8 #in TRs 12s #16s end
+    end_blanks: 10 # in TRs 12s #16s end
     n_blanks_per_block: 4
     n_blocks: 4
 
 staircase:
+    discreet_values: [0.4, 0.35, 0.3, 0.25,0.2,0.175,0.15,0.125,0.1,0.075,0.05,0.03,0.02,0.01,0.005] #easy --> hard
     lb: [0.15,0.85] # max easiness of task
     ub: [0.49,0.51] # max difficulty
     info:
-        startVal: 0.45
-        minVal: 0.01 # same as lb ub but in distance
-        maxVal: 0.9
-        stepSizes: 0.1 #[0.1,0.05,0.05,0.02,0.02,0.01,0.01]
+        startVal: 0.05 # distance from mid point 0.5 -- bigger == easier
+        minVal: 0.001 # same as lb ub but in distance
+        maxVal: 0.4
+        stepSizes: [0.1,0.05,0.025,0.01,0.01,0.005,0.001] #[0.1,0.05,0.05,0.02,0.02,0.01,0.01]
+        nTrials: 100 # larger than the number of trials per behType in the task
         nUp: 2
         nDown: 1
+        stepType: lin
 
 fixation stim:
   line_color: black
@@ -69,6 +72,8 @@ cue:
     duration: 0.5
     color: 1
     lineLength: 0.08
+    diagonal: 'L'
+    cardinal: 'S'
 
 large_task:
     n_sections: 1

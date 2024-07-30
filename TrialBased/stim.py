@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb 25 14:07:02 2019
-
-@author: marcoaqil
+@author: sumiyaabdi
 """
 import numpy as np
 from psychopy import visual, tools
