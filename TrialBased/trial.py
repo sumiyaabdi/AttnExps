@@ -81,7 +81,8 @@ class AttnTrial(Trial):
                         # self.session.win.getMovieFrame()
                     event_type = 'pulse'
                     if self.sync_trigger:
-                        self.exit_phase=True
+                        if (self.phase==0) or (self.phase==3):
+                            self.exit_phase=True
                 else:
                     event_type = 'response'
 

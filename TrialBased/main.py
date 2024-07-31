@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb 25 14:04:44 2019
 
-@author: marcoaqil
+@author: sumiyaabid
 """
 import sys
 import yaml
-from session import PRFSession, PsychophysSession
+from session import AttnSession
 from analyse import *
 from datetime import datetime
+import psychopy
 
-
+print(psychopy.__version__)
 
 datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -19,77 +19,55 @@ def main():
     subject = sys.argv[1] # e.g. sub-001
     sess =  sys.argv[2] # e.g. 1
     run = sys.argv[3] # e.g. 0
-    name = 'exp'
+    name = 'main'
 
-    task = ''
-    while task not in ('2afc', 'yesno'):
-        task = input("Which attention task ['2afc' / 'yesno']?: ")
-
-    attn = ''
-    while attn not in ('s','l'):
-        attn = input('Which attention size [small (s) / large (l)]?: ')
-
-    eyetrack = ''
-    while eyetrack not in ('y','yes','n','no'):
-        eyetrack = input('Eyetracking (y/n)?: ')
+    task = '2afc'
+    eyetrack = 'y'
     
-    output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
+    output_str= subject+'_ses-'+sess+'_task-'+task+'_run-'+run
     print(f'Output folder: {output_str}')
     
-    output_dir = f'./logs/{subject}/{output_str}_Logs'#'./logs/'+subject+'/'+output_str+'_Logs'
+    output_dir = f'./logs/{subject}/{output_str}_Logs'
     
     if os.path.exists(output_dir):
         print("Warning: output directory already exists. Renaming to avoid overwriting.")
         output_dir = output_dir + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    settings_file=f'expsettings/{name}settings_'+task+'.yml'
+    settings_file=f'expsettings/settings.yml'
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
-    
-    # print color range for task
-    if attn == 's' and task == 'yesno':
-        print(f"\nColor Range: {settings['small_task']['color_range']}")
-    elif attn == 'l' and task == 'yesno':
-        print(f"\nColor Range: {settings['large_task']['color_range']}")
 
-    if len(sys.argv) < 5:
-        if task == 'yesno':
-            if (eyetrack == 'n') or (eyetrack == 'no'):
-                ts = PRFSession(output_str=output_str,
-                                output_dir=output_dir,
-                                settings_file=settings_file,
-                                eyetracker_on=False)
-            else:
-                ts = PRFSession(output_str=output_str,
-                                output_dir=output_dir,
-                                settings_file=settings_file)
-            ts.create_stimuli()
-            ts.create_trials()
-            ts.run()
+    # use startVal from last run if possible
+    last_outstr=output_str[:-1]+str(int(output_str[-1])-1)
+    last_outdir=f'./logs/{subject}/{last_outstr}_Logs'
+    try:
+        last_tb=AnalyseTrialBased(last_outstr)
+        last_tb.load_stairs()
+        startVal=np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean()
+        print(f'Using last run to start staircase, startVal = {startVal}')
+    except (FileNotFoundError,KeyError):
+        # startVal=settings['staircase']['startVal']
+        print('No previous staircase found. Starting from scratch.')
 
-        elif task == '2afc':
-            if (eyetrack == 'n') or (eyetrack == 'no'):
-                ts = PsychophysSession(output_str=output_str,
-                                    output_dir=output_dir,
-                                    settings_file=settings_file,
-                                    eyetracker_on=False)
-            else:
-                ts = PsychophysSession(output_str=output_str,
-                                    output_dir=output_dir,
-                                    settings_file=settings_file)
-            ts.create_stimuli()
-            ts.create_trials()
-            ts.run()
+    ts = AttnSession(output_str=output_str,
+                        output_dir=output_dir,
+                        settings_file=settings_file,
+                        eyetracker_on=True)
+    # ts.settings['staircase']['startVal']=startVal
+    ts.create_stimuli()
+    ts.create_trials()
+    ts.create_staircase()
+    ts.run()
 
-    return output_str, task, attn, subject, name
+    return output_str 
 
 
 if __name__ == '__main__':
-    output_str, task, attn, subject, name = main()
-    beh = AnalyseRun(output_str, task, attn, subject, name)
-
-    if task == '2afc':
-        beh.analyse2afc()
-        # beh.plot2afc()
-    elif task == 'yesno':
-        beh.analyseYesNo()
+    output_str = main()
+    tb=AnalyseTrialBased(output_str)
+    tb.load_stairs()
+    try:
+        tb.load_stairs()
+        tb.plot_stairs()
+    except KeyError:
+        print('No staircase data to plot')

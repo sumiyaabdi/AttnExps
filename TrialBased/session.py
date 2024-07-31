@@ -54,12 +54,8 @@ class AttnSession(PylinkEyetrackerSession):
         self.behTypeLoc={}
         self.discreet_values=self.settings['staircase']['discreet_values']
 
-
-        self.large_balances = psyc_stim_list(self.settings['large_task']['color_range'], 
-                                            self.n_stim, self.settings['large_task']['default_balance'])
-        
-        self.small_balances = psyc_stim_list(self.settings['small_task']['color_range'], 
-                                            self.n_stim, self.settings['small_task']['default_balance'])
+        print(f'Number of trials: {self.n_trials}')
+        print(f"Number of volumes from settings: {self.settings['mri']['volumes']}")
 
         if self.settings['operating system'] == 'mac':  # to compensate for macbook retina display
             self.screen = np.array([self.win.size[0], self.win.size[1]]) / 2
@@ -137,7 +133,7 @@ class AttnSession(PylinkEyetrackerSession):
         self.cueStim= cueStim(self,
                                radius=self.settings['small_task']['radius'],
                                lineColor=self.settings['cue']['color'],
-                               lineWidth=self.settings['fixation stim']['line_width'],
+                               lineWidth=self.settings['cue']['line_width'],
                                lineLength=self.settings['cue']['lineLength']
                                )
         
@@ -211,10 +207,10 @@ class AttnSession(PylinkEyetrackerSession):
             if (i < self.settings['attn_task']['start_blanks']) & (self.scanner_sync):
                 phase_durations=[100]
                 sync_trigger=True
-            # # sync end blanks to MRI 
-            # elif (i >= self.n_trials - self.settings['attn_task']['end_blanks']) & (self.scanner_sync):
-            #     phase_durations=[100]
-            #     sync_trigger=True
+            # sync end blanks to MRI 
+            elif (i >= self.n_trials - self.settings['attn_task']['end_blanks']) & (self.scanner_sync):
+                phase_durations=[100]
+                sync_trigger=True
             # sync to MRI trigger first attn trial and every nth trial
             elif ((i - self.settings['attn_task']['start_blanks'] +1) % self.settings['attn_task']['sync_trial'] == 0) & (i != 0) & (self.scanner_sync):
                 phase_durations[-1]=100 
@@ -265,16 +261,11 @@ class AttnSession(PylinkEyetrackerSession):
     
     def draw_small_stimulus(self,balance=None,opacity=1):
         self.stim_nr = self.current_trial.trial_nr
-        if not balance:
-            balance = self.small_balances[self.stim_nr]
-
         self.fix_circle.draw(0, radius=self.settings['small_task'].get('radius'))
         self.smallAF.draw(balance, self.stim_nr,opacity)
     
     def draw_large_stimulus(self,balance=None,opacity=1):
         self.stim_nr = self.current_trial.trial_nr
-        if not balance:
-            balance = self.large_balances[self.stim_nr]
         self.largeAF.draw(balance, self.stim_nr,opacity)
 
     def draw_mapper(self,contrast=1):
@@ -332,7 +323,7 @@ class AttnSession(PylinkEyetrackerSession):
             
             if self.conds[trial_idx] != 0:
                 resp=self.responses[behType][self.current_trial.trial_nr]
-                resp=0 if resp == -1 else resp # change no response to incorrect 
+                # resp=0 if resp == -1 else resp # change no response to incorrect 
                 print('\n', behType)
                 print('This intensity: ', self.stairs[behType].intensity)
                 print('resp ', resp)
@@ -340,14 +331,9 @@ class AttnSession(PylinkEyetrackerSession):
                 if resp != -1: #skip staircase for no response
                     self.stairs[behType].intensities.append(self.stairs[behType].intensity)
                     self.stairs[behType].addResponse(resp,intensity=self.stairs[behType].intensity)
+
                 print('Next intensity: ', self.stairs[behType].intensity)
                 print('Intensities: ', self.stairs[behType].intensities,'\n')
-
-                # # get trial index of next trial of same behType
-                # try:
-                #     next_id=self.behTypeLoc[behType][np.where(self.behTypeLoc[behType] == trial_idx)[0]+1][0]
-                # except IndexError:
-                #     pass
 
         
         np.save(opj(self.output_dir, self.output_str+'_trials.npy'),self.conds)
@@ -363,3 +349,4 @@ class AttnSession(PylinkEyetrackerSession):
         #     self.win.saveMovieFrames(opj(self.screen_dir, self.output_str+'_Screenshot.png'))
             
         self.close()
+        self.quit()

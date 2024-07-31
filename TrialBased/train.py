@@ -22,18 +22,9 @@ def main():
     name = 'train'
 
     task = '2afc'
-    # while task not in ('2afc', 'yesno'):
-    #     task = input("Which attention task ['2afc' / 'yesno']?: ")
-
-    attn = 's'
-    # while attn not in ('s','l'):
-    #     attn = input('Which attention size [small (s) / large (l)]?: ')
-
     eyetrack = 'n'
-    # while eyetrack not in ('y','yes','n','no'):
-    #     eyetrack = input('Eyetracking (y/n)?: ')
     
-    output_str= subject+'_ses-'+sess+'_task-'+task+attn.upper()+'_run-'+run
+    output_str= subject+'_ses-'+sess+'_task-'+task+'_run-'+run
     print(f'Output folder: {output_str}')
     
     output_dir = f'./logs/{subject}/{output_str}_Logs'
@@ -42,7 +33,7 @@ def main():
         print("Warning: output directory already exists. Renaming to avoid overwriting.")
         output_dir = output_dir + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    settings_file=f'expsettings/settings.yml'
+    settings_file=f'expsettings/train_settings.yml'
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
 
@@ -55,7 +46,7 @@ def main():
         startVal=np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean()
         print(f'Using last run to start staircase, startVal = {startVal}')
         settings['staircase']['startVal']=startVal
-    except FileNotFoundError:
+    except (FileNotFoundError,KeyError):
         print('No previous staircase found. Starting from scratch.')
 
     ts = AttnSession(output_str=output_str,
@@ -70,15 +61,11 @@ def main():
 
     return output_str 
 
-
 if __name__ == '__main__':
     output_str = main()
     tb=AnalyseTrialBased(output_str)
-    tb.load_stairs()
-    tb.plot_stairs()
-
-    # if task == '2afc':
-    #     beh.analyse2afc()
-    #     # beh.plot2afc()
-    # elif task == 'yesno':
-    #     beh.analyseYesNo()
+    try:
+        tb.load_stairs()
+        tb.plot_stairs()
+    except KeyError:
+        print('No staircase data to plot')
