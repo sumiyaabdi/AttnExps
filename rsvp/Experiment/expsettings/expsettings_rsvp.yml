@@ -1,0 +1,98 @@
+preferences:
+    general:
+        audioLib: SoundDevice
+        units: deg
+
+window:
+    size: [1920, 1080] #[1440, 900] #
+    pos: [0, 0]
+    color: [0, 0, 0]
+    fullscr: True
+    winType: pyglet
+    waitBlanking: True
+
+operating system: linux
+
+monitor:
+    name: default
+    width: 69.8 # in cm, mac: 28.65
+    distance: 210  # in cm, mac: 53.854
+    gamma: 2.1
+
+mouse:
+    visible: False
+
+eyetracker:
+    model: eyelink
+    address: '100.1.1.1'
+    dot_size: 0.1
+    options:
+        calibration_type: HV5
+        sample_rate: 1000
+        calibration_area_proportion: 0.4 0.4
+        validation_area_proportion: 0.4 0.4
+
+mri:
+    TR: 1.5  # seconds between volume acquisitions
+    topup_scan: True
+    topup_duration: 45 # topup scan duration in seconds (no 't's)
+
+    #only relevant for scanning simulations
+    simulate: False #set this to true to simulate a virtual scanner   
+    TA: 1.5  # seconds to acquire one volume
+    volumes: 160  # number of 3D volumes to obtain in a given scanning run
+    sync: t  # character used as flag for simulation sync timing, default=‘5’
+    skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
+    sound: False  # simulate scanner noise
+
+psychophysics:
+    phase_dur: [0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375,0.09375] #[0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125]
+    task: False
+    bar: True
+    analysis:
+        incorrect_guess: 0
+        hit: 1
+        miss: np.nan
+        double_guess: np.nan
+
+attn_task:
+    baseline_start: 13.5 #seconds
+    baseline_end: 21 #seconds
+    resp_keys: ['b', 'y'] #['left', 'right'] # IF USING BUTTON BOX: [1.0, 2.0]; else ['left', 'right']
+    resp_time: 1
+    
+rsvp:
+    stim_per_trial: 8
+    distractors: ['o','O','B','C','M','N','c','5','a','e','e','E','q','G','1','3','b','D','G','J','P','R','T','t'] #['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+    e_target: ['x','X']
+    h_target_features: ['letter','color', 'ori']
+    h_target_letter: ['c','e']
+    h_target_ori: [17,-17]
+    h_target_color: [[-1,-0.5,0.5], [-1,-0.2,-1]]
+    combo: True
+    letter_size: 0.3
+    signal: 45
+    jitter: 20
+    colors_rgb: [[ 0.3,-1,-1], [-1,-0.5,0.5], [-1,-0.2,-1]] 
+    save_stim: True
+    use_saved_stim: False
+
+fixation_stim:
+    line_color: black
+    line_width: 1.5
+    contrast: 0.75
+    default_color: 0
+    radius: 0.2
+
+PRF stimulus settings:
+    Scanner sync: True                # set this to true to make bar move on input 't'
+    Screenshot: True
+    Squares in bar: 2
+    Bar pass steps: 20                # number of steps the bar takes to traverse the aperture
+    Blanks length: 10                  # length of interbar periods (-1 in orientation). like bar pass steps, in units of TRs or bar step length
+    Bar orientations: [-1, 315,  225, -1, 135, 45, -1,  -1] #[-1, 0,  225, -1, 90, 315, -1,  180, 45, -1,  270, 135,  -1, -1]
+    Bar width in degrees: 1.25
+    Checkers motion speed: 3          # checkers motion speed. direction is randomly up/down at each bar step
+    Size fixation dot in degrees: 0.05 # dot changes color on average every two TRs (or bar steps)
+    Bar step length: 1.5                # in seconds. this is only used if Scanner sync is set to False
+    contrast: 1
