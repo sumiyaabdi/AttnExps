@@ -19,7 +19,34 @@ Z = norm.ppf
 
 ##  UNDER CONSTRUCTION ##
 
-class AnalyseTrialBased():
+class AnalyseTrialSession():
+    def __init__(self, subject, session=1):
+        self.subject = subject
+        self.session = session
+        self.logFolder = f'./logs/{self.subject}/'
+        self._allevents = None
+        self._settings = None
+        self._behTypes = None
+        self._stair_data = None
+        self._runs = None
+    
+    @property
+    def settings(self):
+        if self._settings is None:
+            with open('expsettings/settings.yml') as file:
+                self._settings = yaml.safe_load(file)
+        return self._settings
+    
+    @property
+    def runs(self):
+        if self._runs is None:
+            run_fns=[fn for fn in os.listdir(opj(self.logFolder)) if f'{self.subject}_ses-{self.session}' in fn]
+            for fn in run_fns:
+                run_num=fn.split('_')[-1]
+                self._runs[run_num]=AnalyseTrialRun(fn)
+        return self._runs
+
+class AnalyseTrialRun():
     """Runs after the experiment is completed. Returns a summary of the results.
     """
     
@@ -29,25 +56,33 @@ class AnalyseTrialBased():
         self.wd = wd if wd else os.getcwd() 
         self.verbose=verbose
         self.logFolder = f'./logs/{self.subj}/{output_str}_Logs'
+        self._events = None
+        self._stair_data = None
         
         with open(opj(self.logFolder,self.output_str+'_expsettings.yml')) as file:
             self.settings = yaml.safe_load(file)
-
-
-    def load_stairs(self):
+        
         self.behTypes=self.settings['trial_types']['response_types']
-        fns = [opj(self.logFolder,self.output_str+f'_{beh}.npy') for beh in self.behTypes]
-        self.stair_data={}
-        for beh,fn in zip(self.behTypes,fns):
-            try:
-                with open(fn, 'rb') as f:
-                    self.stair_data[beh] = pickle.load(f)
-            except FileNotFoundError:
-                print(f'No staircase data found for {beh}')
-                continue
-        self.stair_data
-    
 
+    @property
+    def events(self):      
+        if self._events is None:
+            self._events=pd.read_csv(opj(self.logFolder,self.output_str+'_events.tsv'),sep='\t')
+        return self._events
+
+    @property
+    def stair_data(self):
+        if self._stair_data is None:
+            fns = [opj(self.logFolder,self.output_str+f'_{beh}.npy') for beh in self.behTypes]
+            self._stair_data={}
+            for beh,fn in zip(self.behTypes,fns):
+                try:
+                    with open(fn, 'rb') as f:
+                        self.stair_data[beh] = pickle.load(f)
+                except FileNotFoundError:
+                    print(f'No staircase data found for {beh}')
+                    continue
+        return self._stair_data
 
     def plot_stairs(self):
         colors=['tab:blue','tab:purple','tab:orange','tab:red', 'tab:green']
@@ -107,7 +142,3 @@ class AnalyseTrialBased():
 
         fig.savefig(opj(self.logFolder,'staircase.png'),dpi=300)
         plt.show()
-
-    def events_df(self):
-        self.eventsdf=pd.read_csv(opj(self.logFolder,self.output_str+'_events.tsv'),sep='\t')
-        return self.eventsdf

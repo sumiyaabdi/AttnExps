@@ -41,7 +41,7 @@ def main():
     last_outstr=output_str[:-1]+str(int(output_str[-1])-1)
     last_outdir=f'./logs/{subject}/{last_outstr}_Logs'
     try:
-        last_tb=AnalyseTrialBased(last_outstr)
+        last_tb=AnalyseTrialRun(last_outstr)
         last_tb.load_stairs()
         startVal=np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean()
         print(f'Using last run to start staircase, startVal = {startVal}')
@@ -63,7 +63,7 @@ def main():
 
 if __name__ == '__main__':
     output_str = main()
-    tb=AnalyseTrialBased(output_str)
+    tb=AnalyseTrialRun(output_str)
     try:
         tb.load_stairs()
         tb.plot_stairs()
