@@ -52,7 +52,7 @@ def main():
     ts = AttnSession(output_str=output_str,
                         output_dir=output_dir,
                         settings_file=settings_file,
-                        eyetracker_on=True)
+                        eyetracker_on=False)
     # ts.settings['staircase']['startVal']=startVal
     ts.create_stimuli()
     ts.create_trials()
