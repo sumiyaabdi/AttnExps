@@ -29,8 +29,15 @@ class AttnSession(PylinkEyetrackerSession):
     def __init__(self, output_str, 
                  output_dir, 
                  settings_file, 
-                 attn_sz,
                  eyetracker_on=True):
+        """Session class contains all the information and methods to run the experiment.
+
+        Args:
+            output_str (str): Log folder substring
+            output_dir (str): Folder where logs are saved
+            settings_file (str): path/to/settings.yml
+            eyetracker_on (bool, optional): Initiates eye calibration and tracking. Defaults to True.
+        """
 
         super().__init__(output_str=output_str, 
                          output_dir=output_dir, 

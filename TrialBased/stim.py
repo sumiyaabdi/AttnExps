@@ -174,9 +174,9 @@ class AttSizeStim():
 
         for ecc, cpr, s in zip(ring_eccs[:], circles_per_ring[:], blob_sizes[:]):
             if ecc in ring_eccs[:3]:
-                cpr = int(cpr-3)
+                cpr = int(cpr-3) # remove 3 elements from the first 3 rings
             if not ring_nr in section_positions:
-                ring_condition = np.floor(n_sections * ring_nr / total_rings)
+                ring_condition = np.floor(n_sections * ring_nr / total_rings) # if you have multiple sections
                 for pa in np.linspace(0, 2 * np.pi, cpr, endpoint=False):
                     x, y = tools.coordinatetools.pol2cart(pa, ecc, units=None)
                     if ecc == ring_eccs[0]:
@@ -229,7 +229,7 @@ class AttSizeStim():
         if self.jitter != None:
             self.element_array_stim.setXYs(self.element_array_np[:,[0,1]]+self.j[stim_nr])
 
-        this_ring_bool = self.element_array_np[:, -1] == 0
+        this_ring_bool = self.element_array_np[:, -1] == 0 # need to make loop if you have multiple sections, for now selects all dots in AttSizeStim object
         nr_elements_in_condition = this_ring_bool.sum()
         nr_signal_elements = int(nr_elements_in_condition * color_balance)
         ordered_signals = np.r_[np.ones((nr_signal_elements, 3)) * self.color1,

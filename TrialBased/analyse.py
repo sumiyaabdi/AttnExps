@@ -14,7 +14,10 @@ import glob
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats import norm
-from .utils import *
+try:
+    from .utils import *
+except ImportError:
+    from utils import *
 
 Z = norm.ppf
 

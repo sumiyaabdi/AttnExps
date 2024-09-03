@@ -7,7 +7,10 @@
 import sys
 import yaml
 from session import AttnSession
-from analyse import *
+try:
+    from analyse import *
+except ImportError:
+    from TrialBased.analyse import *
 from datetime import datetime
 import psychopy
 
