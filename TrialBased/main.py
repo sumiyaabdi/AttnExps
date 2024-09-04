@@ -7,7 +7,10 @@
 import sys
 import yaml
 from session import AttnSession
-from analyse import *
+try:
+    from analyse import *
+except ImportError:
+    from TrialBased.analyse import *
 from datetime import datetime
 import psychopy
 
@@ -52,7 +55,7 @@ def main():
     ts = AttnSession(output_str=output_str,
                         output_dir=output_dir,
                         settings_file=settings_file,
-                        eyetracker_on=True)
+                        eyetracker_on=False)
     # ts.settings['staircase']['startVal']=startVal
     ts.create_stimuli()
     ts.create_trials()
