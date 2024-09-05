@@ -93,6 +93,7 @@ class AnalyseTrialRun():
         fig,ax=plt.subplots(1,2,figsize=(12,6))
 
         for beh,color in zip(self.behTypes,colors):
+            print(beh)
             if not maxIntensity:
                 maxIntensity=np.max(self.stair_data[beh].intensities)
             if maxIntensity < np.max(self.stair_data[beh].intensities):

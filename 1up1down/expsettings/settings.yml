@@ -7,7 +7,7 @@ window:
     size: [1920, 1080] #mac: #[3024, 1964] #
     pos: [0, 0]
     color: [0, 0, 0]
-    fullscr: True
+    fullscr: False
     winType: pyglet
     waitBlanking: True
 
@@ -16,7 +16,7 @@ operating system: linux
 monitor:
     name: default
     width: 69.8 # in cm, mac: 29.82 # BOLD: 
-    distance: 210  # in cm, mac: 53.854 #
+    distance: 196  # in cm, mac: 53.854 #
     gamma: 2.1 # change to 2.1 for scanning
 
 mouse:
@@ -51,22 +51,19 @@ attn_task:
     sync_trial: 1
     stim_per_trial: 1
     resp_keys:  ['b', 'y'] # (Blue, Pink) IF USING PSYCHOPHYS BUTTON BOX: ['1', '2']; AT SCANNER ['b', 'y']; Mac ['1', '2']
-    start_blanks: 8 #8 #in TRs 12s #16s end
-    end_blanks: 10 #10 # in TRs 12s #16s end
-    n_blanks_per_block: 4
-    n_blocks: 4
+    start_blanks: 2 #8 #in TRs 12s #16s end
+    end_blanks: 2 #10 # in TRs 12s #16s end
+    n_blanks_per_block: 0
+    n_blocks: 10
 
 staircase:
-    # discreet_values: [0.4, 0.35, 0.3, 0.25,0.225,0.2,0.175,0.16,0.15,0.14,0.13,0.125,0.12,0.11,0.1,0.075,0.07,0.06,0.05,0.04,0.03,0.02,0.01,0.005,0.004,0.003,0.0025,0.002,0.0015,0.001,0.0005] #easy --> hard
-    # lb: [0.15,0.85] # max easiness of task
-    # ub: [0.49,0.51] # max difficulty
     info:
-        startVal: 0.05 # distance from mid point 0.5 -- bigger == easier
-        minVal: 0.01 # same as lb ub but in distance
-        maxVal: 0.4
-        stepSizes: [0.05,0.025,0.02,0.015,0.01,0.01,0.01,0.005,0.001,0.0005] #[0.1,0.05,0.05,0.02,0.02,0.01,0.01]
-        nTrials: 100 # larger than the number of trials per behType in the task
-        nUp: 2
+        startVal: 0.7 # distance from mid point 0.5 -- bigger == easier
+        minVal: 0 # same as lb ub but in distance
+        maxVal: 1
+        stepSizes: [0.1,0.05,0.01]
+        nTrials: 20 # larger than the number of trials per behType in the task
+        nUp: 1
         nDown: 1
         stepType: lin
 
@@ -117,6 +114,7 @@ radial:
     outer_radius: 1.625
     inner_radius: 1
 
+
 trial_types:
     low_task_opacity: 0.2
     high_task_opacity: 0.6
@@ -124,8 +122,8 @@ trial_types:
     low_mapper_contrast: 0.075
     high_mapper_contrast: 0.9
     absent_mapper_contrast: 0
-    low_contrast_ids: [1, 3, 5, 7, 9] #used to double the number of these trials
-    response_types: ['small_low', 'small_absent', 'large_low', 'large_high','small_high']
+    low_contrast_ids: [14,14,15] #used to double the number of these trials
+    response_types: ['small', 'large_low', 'large_high']
 
     '1':
         cue: 's'
@@ -147,28 +145,28 @@ trial_types:
         large_opacity: high
         draw_mapper: True
         mapper_contrast: low
-        response_type_id: 4
+        response_type_id: 0
     '4':
         cue: 's'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: high
-        response_type_id: 4
+        response_type_id: 0
     '5':
         cue: 's'
         draw_large: False
         large_opacity: absent
         draw_mapper: True
         mapper_contrast: low
-        response_type_id: 1
+        response_type_id: 0
     '6':
         cue: 's'
         draw_large: False
         large_opacity: absent
         draw_mapper: True
         mapper_contrast: high
-        response_type_id: 1
+        response_type_id: 0
     '7':
         cue: 'l'
         draw_large: True
@@ -189,14 +187,14 @@ trial_types:
         large_opacity: high
         draw_mapper: True
         mapper_contrast: low
-        response_type_id: 3
+        response_type_id: 1
     '10':
         cue: 'l'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: high
-        response_type_id: 3
+        response_type_id: 1
     '11':
         cue: 's'
         draw_large: True
@@ -210,7 +208,7 @@ trial_types:
         large_opacity: high
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 4
+        response_type_id: 0
 
     '13':
         cue: 's'
@@ -218,22 +216,22 @@ trial_types:
         large_opacity: absent
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 1
+        response_type_id: 0
     '14':
         cue: 'l'
         draw_large: True
         large_opacity: low
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 2
+        response_type_id: 1
     '15':
         cue: 'l'
         draw_large: True
         large_opacity: high
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 3
+        response_type_id: 2
 
 PRF stimulus settings:
-    Scanner sync: True                # set this to true to make bar move on input 't'
+    Scanner sync: False                # set this to true to make bar move on input 't'
     Screenshot: True

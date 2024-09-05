@@ -85,7 +85,6 @@ class AttnTrial(Trial):
                             self.exit_phase=True
                 else:
                     event_type = 'response'
-                    self.exit_trial = True
 
                 idx = self.session.global_log.shape[0]
                 self.session.global_log.loc[idx, 'trial_nr'] = self.trial_nr
@@ -119,21 +118,22 @@ class AttnTrial(Trial):
         return events
     
     def check_correct(self, response):
+        """For 1up1down staircase, "correct" resposne means moving the staircase to become more pink
+
+        Args:
+            response (str): subject response (pink or blue)
+
+        Returns:
+            int: either a 0 (responded more pink --> make stair more blue) 
+                or a 1 (responded more blue --> make stair more pink)
+        """
         
-        task= 'large' if self.parameters['task'] == 'l' else 'small'
-        balance = self.parameters[f'{task}_balance']
-
-        if balance < 0.5:
-            correct_response=self.session.resp_pink
-        elif balance > 0.5:
-            correct_response=self.session.resp_blue
-        else:
-            correct_response=None
-
-        if response == correct_response:
+        if response == self.session.resp_blue:
             return 1
-        else:  
+        elif response == self.session.resp_pink:  
             return 0
+        else:
+            return -1
 
 
 class BlankTrial(AttnTrial):

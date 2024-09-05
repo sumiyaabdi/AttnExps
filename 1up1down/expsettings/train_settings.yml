@@ -7,7 +7,7 @@ window:
     size: [1920, 1080] #mac: #[3024, 1964] #
     pos: [0, 0]
     color: [0, 0, 0]
-    fullscr: False
+    fullscr: True
     winType: pyglet
     waitBlanking: True
 
@@ -24,6 +24,14 @@ mouse:
 
 eyetracker:
     model: eyelink
+    address: '100.1.1.1'
+    dot_size: 0.1
+    options:
+        active_eye: left
+        calibration_type: HV5
+        sample_rate: 1000
+        calibration_area_proportion: 0.4 0.4
+        validation_area_proportion: 0.4 0.4
 
 mri:
     TR: 1.5  # seconds between volume acquisitions
@@ -31,7 +39,7 @@ mri:
     topup_duration: 45 # topup scan duration in seconds (no 't's)
 
     #only relevant for scanning simulations
-    simulate: True #set this to true to simulate a virtual scanner   
+    simulate: False #set this to true to simulate a virtual scanner   
     TA: 1.5  # seconds to acquire one volume
     volumes: 54  # number of 3D volumes to obtain in a given scanning run
     sync: t  # character used as flag for simulation sync timing, default=‘5’
@@ -39,14 +47,14 @@ mri:
     sound: False  # simulate scanner noise
 
 attn_task:
-    phase_durations: [0.6,0.4,1,1.3] # Training Timing: [0.7,0.6,1,1.3] # Scanner Timing:[0.6,0.4,1,1]
+    phase_durations: [0.6,0.4,1,1] # Training Timing: [0.7,0.6,1,1.3] # Scanner Timing:[0.6,0.4,1,1]
     sync_trial: 1
     stim_per_trial: 1
     resp_keys:  ['1', '2'] # (Blue, Pink) IF USING PSYCHOPHYS BUTTON BOX: ['1', '2']; AT SCANNER ['b', 'y']; Mac ['1', '2']
-    start_blanks: 0 #8 #in TRs 12s #16s end
-    end_blanks: 0 #10 # in TRs 12s #16s end
+    start_blanks: 2 #8 #in TRs 12s #16s end
+    end_blanks: 2 #10 # in TRs 12s #16s end
     n_blanks_per_block: 0
-    n_blocks: 20
+    n_blocks: 10
 
 staircase:  
     info:
@@ -113,8 +121,8 @@ trial_types:
     low_mapper_contrast: 0.075
     high_mapper_contrast: 0.9
     absent_mapper_contrast: 0
-    low_contrast_ids: [1, 3, 5, 7, 9] #used to double the number of these trials
-    response_types: ['small_low', 'small_absent', 'large_low', 'large_high','small_high']
+    low_contrast_ids: [14,14,15,15] #used to double the number of these trials
+    response_types: ['small', 'large_low', 'large_high']
 
     '1':
         cue: 's'
@@ -136,28 +144,28 @@ trial_types:
         large_opacity: high
         draw_mapper: True
         mapper_contrast: low
-        response_type_id: 4
+        response_type_id: 0
     '4':
         cue: 's'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: high
-        response_type_id: 4
+        response_type_id: 0
     '5':
         cue: 's'
         draw_large: False
         large_opacity: absent
         draw_mapper: True
         mapper_contrast: low
-        response_type_id: 1
+        response_type_id: 0
     '6':
         cue: 's'
         draw_large: False
         large_opacity: absent
         draw_mapper: True
         mapper_contrast: high
-        response_type_id: 1
+        response_type_id: 0
     '7':
         cue: 'l'
         draw_large: True
@@ -178,14 +186,14 @@ trial_types:
         large_opacity: high
         draw_mapper: True
         mapper_contrast: low
-        response_type_id: 3
+        response_type_id: 1
     '10':
         cue: 'l'
         draw_large: True
         large_opacity: high
         draw_mapper: True
         mapper_contrast: high
-        response_type_id: 3
+        response_type_id: 1
     '11':
         cue: 's'
         draw_large: True
@@ -199,7 +207,7 @@ trial_types:
         large_opacity: high
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 4
+        response_type_id: 0
 
     '13':
         cue: 's'
@@ -207,21 +215,21 @@ trial_types:
         large_opacity: absent
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 1
+        response_type_id: 0
     '14':
         cue: 'l'
         draw_large: True
         large_opacity: low
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 2
+        response_type_id: 1
     '15':
         cue: 'l'
         draw_large: True
         large_opacity: high
         draw_mapper: False
         mapper_contrast: absent
-        response_type_id: 3
+        response_type_id: 2
 
 PRF stimulus settings:
     Scanner sync: False                # set this to true to make bar move on input 't'

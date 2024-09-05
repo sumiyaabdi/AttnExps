@@ -8,6 +8,9 @@ def load_yaml(file_name):
         settings=yaml.safe_load(file)
     return settings
 
+def round_nearest_05(x):
+    return round(x * 20) / 20
+
 def psyc_stim_list(stim_range, n_stim, baseline):
     " Creates stim list for psychophysics task"
     stim_list = stim_range*int(n_stim/len(stim_range))

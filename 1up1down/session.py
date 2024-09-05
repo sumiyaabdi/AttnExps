@@ -44,10 +44,20 @@ class AttnSession(PylinkEyetrackerSession):
                          settings_file=settings_file, 
                          eyetracker_on=eyetracker_on)
 
-        n_conds=np.arange(1,2,dtype=int)
+        n_conds=np.arange(11,16,dtype=int)
         n_conds=np.append(n_conds,[0]*self.settings['attn_task']['n_blanks_per_block']) # add blanks
         n_conds=np.append(n_conds,self.settings['trial_types']['low_contrast_ids']) # add an extra repetition for every low-contrast run
-        self.conds=np.concatenate([rng.permutation(n_conds) for i in range(self.settings['attn_task']['n_blocks'])]) # randomize and repeat
+
+        # for 1up1down staircase keep staircases consecutive instead of suffling
+        self.conds=np.asarray(sorted(np.concatenate([rng.permutation(n_conds) for i in range(self.settings['attn_task']['n_blocks'])])))# randomize and repeat
+
+        # hackey but this is the flow I want for the 1 up 1 down... shuffle within stair types, insert blank bw stairtypes
+        print(self.conds, '\n', type(self.conds))
+        print(self.conds[np.where((self.conds > 0) & (self.conds < 14))[0]])
+        self.conds=np.concatenate((rng.permutation(self.conds[np.where((self.conds > 0) & (self.conds < 14))[0]]), self.conds[np.where(self.conds >= 14)[0]]))
+        self.conds=np.insert(self.conds,np.where(self.conds == 14)[0][0],0) # insert blank at first 14
+        self.conds=np.insert(self.conds,np.where(self.conds == 15)[0][0],0) # insert blank at first 15
+        
         self.conds=np.concatenate((np.zeros(self.settings['attn_task']['start_blanks']),self.conds)).astype(int) # add start_blanks
         self.conds=np.concatenate((self.conds,np.zeros(self.settings['attn_task']['end_blanks']))).astype(int) # add end
         np.save(opj(self.output_dir, self.output_str+'_trials.npy'),self.conds)
@@ -305,21 +315,9 @@ class AttnSession(PylinkEyetrackerSession):
             behType=self.current_trial.parameters['response_type'] #same as self.behTypeTrials[trial_idx]
             self.current_trial.behType=behType
 
-            # skip blanks, discritize intensity for staircase
+            # skip blanks for staircase
             try:
                 intensity=self.stairs[behType].intensity
-                ## Discretize intensity
-                # if intensity not in self.discreet_values:
-                #     intensity= min(self.discreet_values, key=lambda x:abs(x-intensity))
-                #     self.stairs[behType].discreet.append(intensity)
-                #     self.stairs[behType].intensity = intensity
-                # else:
-                #     self.stairs[behType].discreet.append(intensity)
-                
-                ## Choose more blue or more pink at random
-                # idL=np.random.choice([0,1])
-                # idS=np.random.choice([0,1])
-
                 self.current_trial.parameters['large_balance']=intensity
                 self.current_trial.parameters['small_balance']=intensity
             except KeyError:
@@ -345,7 +343,6 @@ class AttnSession(PylinkEyetrackerSession):
 
                 print('Next intensity: ', self.stairs[behType].intensity)
                 print('Intensities: ', self.stairs[behType].intensities,'\n')
-
         
         np.save(opj(self.output_dir, self.output_str+'_trials.npy'),self.conds)
         with open(opj(self.output_dir, self.output_str+'_responses.npy'), 'wb') as f:
