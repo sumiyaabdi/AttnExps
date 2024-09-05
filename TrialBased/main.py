@@ -43,7 +43,7 @@ def main():
         settings = yaml.safe_load(file)
 
     # use startVal from last run if possible
-    last_outstr=output_str[:-1]+str(int(output_str[-1])-1)
+    last_outstr=output_str.rsplit('-',1)[0]+'-'+str(int(output_str.rsplit('-',1)[1])-1)
     last_outdir=f'./logs/{subject}/{last_outstr}_Logs'
     try:
         last_tb=AnalyseTrialRun(last_outstr)
