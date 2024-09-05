@@ -57,12 +57,12 @@ attn_task:
     n_blocks: 4
 
 staircase:
-    discreet_values: [0.4, 0.35, 0.3, 0.25,0.225,0.2,0.175,0.16,0.15,0.14,0.13,0.125,0.12,0.11,0.1,0.075,0.07,0.06,0.05,0.04,0.03,0.02,0.01,0.005,0.004,0.003,0.0025,0.002,0.0015,0.001,0.0005] #easy --> hard
-    lb: [0.15,0.85] # max easiness of task
-    ub: [0.49,0.51] # max difficulty
+    # discreet_values: [0.4, 0.35, 0.3, 0.25,0.225,0.2,0.175,0.16,0.15,0.14,0.13,0.125,0.12,0.11,0.1,0.075,0.07,0.06,0.05,0.04,0.03,0.02,0.01,0.005,0.004,0.003,0.0025,0.002,0.0015,0.001,0.0005] #easy --> hard
+    # lb: [0.15,0.85] # max easiness of task
+    # ub: [0.49,0.51] # max difficulty
     info:
         startVal: 0.05 # distance from mid point 0.5 -- bigger == easier
-        minVal: 0.001 # same as lb ub but in distance
+        minVal: 0.01 # same as lb ub but in distance
         maxVal: 0.4
         stepSizes: [0.05,0.025,0.02,0.015,0.01,0.01,0.01,0.005,0.001,0.0005] #[0.1,0.05,0.05,0.02,0.02,0.01,0.01]
         nTrials: 100 # larger than the number of trials per behType in the task

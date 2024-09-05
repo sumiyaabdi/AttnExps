@@ -7,8 +7,8 @@
 
 import numpy as np
 import pickle
-rng=np.random.default_rng(2024)
-np.random.seed(2024)
+rng=np.random.default_rng()
+# np.random.seed(2024)
 import os
 import copy
 import sys
@@ -44,7 +44,7 @@ class AttnSession(PylinkEyetrackerSession):
                          settings_file=settings_file, 
                          eyetracker_on=eyetracker_on)
 
-        n_conds=np.arange(1,16,dtype=int)
+        n_conds=np.arange(1,2,dtype=int)
         n_conds=np.append(n_conds,[0]*self.settings['attn_task']['n_blanks_per_block']) # add blanks
         n_conds=np.append(n_conds,self.settings['trial_types']['low_contrast_ids']) # add an extra repetition for every low-contrast run
         self.conds=np.concatenate([rng.permutation(n_conds) for i in range(self.settings['attn_task']['n_blocks'])]) # randomize and repeat
@@ -60,7 +60,6 @@ class AttnSession(PylinkEyetrackerSession):
         self.resp_pink=self.settings['attn_task']['resp_keys'][1]
         self.behTypes=self.settings['trial_types']['response_types']
         self.behTypeLoc={}
-        # self.discreet_values=self.settings['staircase']['discreet_values']
 
         print(f'Number of trials: {self.n_trials}')
         print(f"Number of volumes from settings: {self.settings['mri']['volumes']}")

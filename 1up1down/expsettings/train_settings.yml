@@ -39,14 +39,14 @@ mri:
     sound: False  # simulate scanner noise
 
 attn_task:
-    phase_durations: [0.7,0.6,1,1] # Training Timing: [0.7,0.6,1,1.3] # Scanner Timing:[0.6,0.4,1,1]
+    phase_durations: [0.6,0.4,1,1.3] # Training Timing: [0.7,0.6,1,1.3] # Scanner Timing:[0.6,0.4,1,1]
     sync_trial: 1
     stim_per_trial: 1
     resp_keys:  ['1', '2'] # (Blue, Pink) IF USING PSYCHOPHYS BUTTON BOX: ['1', '2']; AT SCANNER ['b', 'y']; Mac ['1', '2']
     start_blanks: 0 #8 #in TRs 12s #16s end
     end_blanks: 0 #10 # in TRs 12s #16s end
-    n_blanks_per_block: 4
-    n_blocks: 1
+    n_blanks_per_block: 0
+    n_blocks: 20
 
 staircase:  
     info:
