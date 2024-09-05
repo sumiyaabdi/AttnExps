@@ -1,0 +1,237 @@
+preferences:
+    general:
+        audioLib: SoundDevice
+        units: deg
+
+window:
+    size: [1920, 1080] #mac: #[3024, 1964] #
+    pos: [0, 0]
+    color: [0, 0, 0]
+    fullscr: False
+    winType: pyglet
+    waitBlanking: True
+
+operating system: linux
+
+monitor:
+    name: default
+    width: 69.8 # in cm, mac: 29.82 # BOLD: 
+    distance: 196  # in cm, mac: 53.854 #
+    gamma: 2.1 # change to 2.1 for scanning
+
+mouse:
+    visible: False
+
+eyetracker:
+    model: eyelink
+    address: '100.1.1.1'
+    dot_size: 0.1
+    options:
+        active_eye: left
+        calibration_type: HV5
+        sample_rate: 1000
+        calibration_area_proportion: 0.4 0.4
+        validation_area_proportion: 0.4 0.4
+
+mri:
+    TR: 1.5  # seconds between volume acquisitions
+    topup_scan: False
+    topup_duration: 45 # topup scan duration in seconds (no 't's)
+
+    #only relevant for scanning simulations
+    simulate: False #set this to true to simulate a virtual scanner   
+    TA: 1.5  # seconds to acquire one volume
+    volumes: 210  # number of 3D volumes to obtain in a given scanning run
+    sync: t  # character used as flag for simulation sync timing, default=‘5’
+    skip: 0  # how many frames to silently omit initially during T1 stabilization, no sync pulse.
+    sound: False  # simulate scanner noise
+
+attn_task:
+    phase_durations: [0.6,0.4,1,1] # Training Timing: [0.7,0.6,1,1.3] # Scanner Timing:[0.6,0.4,1,1]
+    sync_trial: 1
+    stim_per_trial: 1
+    resp_keys:  ['b', 'y'] # (Blue, Pink) IF USING PSYCHOPHYS BUTTON BOX: ['1', '2']; AT SCANNER ['b', 'y']; Mac ['1', '2']
+    start_blanks: 2 #8 #in TRs 12s #16s end
+    end_blanks: 2 #10 # in TRs 12s #16s end
+    n_blanks_per_block: 0
+    n_blocks: 10
+
+staircase:
+    info:
+        startVal: 0.7 # distance from mid point 0.5 -- bigger == easier
+        minVal: 0 # same as lb ub but in distance
+        maxVal: 1
+        stepSizes: [0.1,0.05,0.01]
+        nTrials: 20 # larger than the number of trials per behType in the task
+        nUp: 1
+        nDown: 1
+        stepType: lin
+
+fixation stim:
+  line_color: black
+  line_width: 1.5
+  contrast: 0.75
+  default_color: 0
+
+cue:
+    duration: 0.5
+    color: 1
+    lineLength: 0.06
+    diagonal: 'L'
+    cardinal: 'S'
+    line_width: 4
+
+large_task:
+    n_sections: 1
+    n_rings: 30
+    row_spacing: 1
+    opacity: 0.8
+    color1: [-0.8, 0.2, 1] 
+    color2:  [1, -0.3, 0.7] 
+    default_balance: 0.5
+    color_range: [0.1,0.1] #0-0.49 == pink; 0.51-1 == blue
+    jitter: 0.15
+    padding: 0 # degrees
+
+small_task:
+    n_sections: 1
+    n_rings: 5
+    row_spacing: 2
+    opacity: 0.25
+    radius: 0.1
+    color1:  [-0.8, 0.2, 1] 
+    color2:  [1, -0.3, 0.7] 
+    default_balance: 0.5
+    color_range: [0.9, 0.9 ] #0-0.49 == pink; 0.51-1 == blue
+
+radial:
+    angular_cycles: 7
+    angular_res: 60
+    radial_cycles: 0
+    border_radius: 0.1
+    n_mask_pixels: 0
+    frequency: 8.0 
+    outer_radius: 1.625
+    inner_radius: 1
+
+
+trial_types:
+    low_task_opacity: 0.2
+    high_task_opacity: 0.6
+    absent_task_opacity: 0
+    low_mapper_contrast: 0.075
+    high_mapper_contrast: 0.9
+    absent_mapper_contrast: 0
+    low_contrast_ids: [14,14,15] #used to double the number of these trials
+    response_types: ['small', 'large_low', 'large_high']
+
+    '1':
+        cue: 's'
+        draw_large: True
+        large_opacity: low
+        draw_mapper: True
+        mapper_contrast: low
+        response_type_id: 0
+    '2':
+        cue: 's'
+        draw_large: True
+        large_opacity: low
+        draw_mapper: True
+        mapper_contrast: high
+        response_type_id: 0
+    '3':
+        cue: 's'
+        draw_large: True
+        large_opacity: high
+        draw_mapper: True
+        mapper_contrast: low
+        response_type_id: 0
+    '4':
+        cue: 's'
+        draw_large: True
+        large_opacity: high
+        draw_mapper: True
+        mapper_contrast: high
+        response_type_id: 0
+    '5':
+        cue: 's'
+        draw_large: False
+        large_opacity: absent
+        draw_mapper: True
+        mapper_contrast: low
+        response_type_id: 0
+    '6':
+        cue: 's'
+        draw_large: False
+        large_opacity: absent
+        draw_mapper: True
+        mapper_contrast: high
+        response_type_id: 0
+    '7':
+        cue: 'l'
+        draw_large: True
+        large_opacity: low
+        draw_mapper: True
+        mapper_contrast: low
+        response_type_id: 2
+    '8':
+        cue: 'l'
+        draw_large: True
+        large_opacity: low
+        draw_mapper: True
+        mapper_contrast: high
+        response_type_id: 2
+    '9':
+        cue: 'l'
+        draw_large: True
+        large_opacity: high
+        draw_mapper: True
+        mapper_contrast: low
+        response_type_id: 1
+    '10':
+        cue: 'l'
+        draw_large: True
+        large_opacity: high
+        draw_mapper: True
+        mapper_contrast: high
+        response_type_id: 1
+    '11':
+        cue: 's'
+        draw_large: True
+        large_opacity: low
+        draw_mapper: False
+        mapper_contrast: absent
+        response_type_id: 0
+    '12':
+        cue: 's'
+        draw_large: True
+        large_opacity: high
+        draw_mapper: False
+        mapper_contrast: absent
+        response_type_id: 0
+
+    '13':
+        cue: 's'
+        draw_large: False
+        large_opacity: absent
+        draw_mapper: False
+        mapper_contrast: absent
+        response_type_id: 0
+    '14':
+        cue: 'l'
+        draw_large: True
+        large_opacity: low
+        draw_mapper: False
+        mapper_contrast: absent
+        response_type_id: 1
+    '15':
+        cue: 'l'
+        draw_large: True
+        large_opacity: high
+        draw_mapper: False
+        mapper_contrast: absent
+        response_type_id: 2
+
+PRF stimulus settings:
+    Scanner sync: False                # set this to true to make bar move on input 't'
+    Screenshot: True
