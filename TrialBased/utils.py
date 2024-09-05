@@ -20,6 +20,9 @@ def get_stim_nr(trial,phase,stim_per_trial):
     phase = phase-1 if phase % 2 == 1 else phase
     return int(trial * stim_per_trial + (phase)/2)
 
+def round_nearest_05(x):
+    return round(x * 20) / 20
+
 # def create_dot_grid(xy,jitter, n_stim):
 
 #     """
