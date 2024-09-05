@@ -7,7 +7,12 @@
 import sys
 import yaml
 from session import AttnSession
-from analyse import *
+try:
+    from analyse import *
+    from utils import *
+except ImportError:
+    from TrialBased.analyse import *
+    from TrialBased.utils import *
 from datetime import datetime
 import psychopy
 
@@ -38,12 +43,12 @@ def main():
         settings = yaml.safe_load(file)
 
     # use startVal from last run if possible
-    last_outstr=output_str[:-1]+str(int(output_str[-1])-1)
+    last_outstr=output_str.rsplit('-',1)[0]+'-'+str(int(output_str.rsplit('-',1)[1])-1)
     last_outdir=f'./logs/{subject}/{last_outstr}_Logs'
     try:
         last_tb=AnalyseTrialRun(last_outstr)
         last_tb.load_stairs()
-        startVal=np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean()
+        startVal=round_nearest_05(np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean())
         print(f'Using last run to start staircase, startVal = {startVal}')
     except (FileNotFoundError,KeyError):
         # startVal=settings['staircase']['startVal']

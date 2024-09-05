@@ -14,7 +14,10 @@ import glob
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats import norm
-from .utils import *
+try:
+    from .utils import *
+except ImportError:
+    from utils import *
 
 Z = norm.ppf
 
@@ -156,7 +159,7 @@ class AnalyseTrialRun():
     def plot_stairs(self):
         colors=['tab:blue','tab:purple','tab:orange','tab:red', 'tab:green']
         threshVal=0.8
-        expectedMin=0
+        expectedMin=0.5
         maxIntensity=None
 
         fig,ax=plt.subplots(1,2,figsize=(12,6))
