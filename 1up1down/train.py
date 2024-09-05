@@ -38,22 +38,20 @@ def main():
     with open(settings_file) as file:
         settings = yaml.safe_load(file)
 
-    # use startVal from last run if possible
-    last_outstr=output_str[:-1]+str(int(output_str[-1])-1)
-    last_outdir=f'./logs/{subject}/{last_outstr}_Logs'
-    try:
-        last_tb=AnalyseTrialRun(last_outstr)
-        last_tb.load_stairs()
-        startVal=np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean()
-        print(f'Using last run to start staircase, startVal = {startVal}')
-        settings['staircase']['startVal']=startVal
-    except (FileNotFoundError,KeyError):
-        print('No previous staircase found. Starting from scratch.')
+    # # use startVal from last run if possible
+    # last_outstr=output_str[:-1]+str(int(output_str[-1])-1)
+    # last_outdir=f'./logs/{subject}/{last_outstr}_Logs'
+    # try:
+    #     last_tb=AnalyseTrialRun(last_outstr)
+    #     startVal=np.asarray([last_tb.stair_data[beh].intensities[-1] for beh in last_tb.behTypes]).mean()
+    #     print(f'Using last run to start staircase, startVal = {startVal}')
+    #     settings['staircase']['startVal']=startVal
+    # except (FileNotFoundError,KeyError):
+    #     print('No previous staircase found. Starting from scratch.')
 
     ts = AttnSession(output_str=output_str,
                         output_dir=output_dir,
                         settings_file=settings_file,
-                        attn_sz='s',
                         eyetracker_on=False)
 
     ts.create_stimuli()
@@ -67,7 +65,6 @@ if __name__ == '__main__':
     output_str = main()
     tb=AnalyseTrialRun(output_str)
     try:
-        tb.load_stairs()
         tb.plot_stairs()
     except KeyError:
         print('No staircase data to plot')
